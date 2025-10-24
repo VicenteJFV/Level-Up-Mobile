@@ -15,6 +15,8 @@ import com.example.levelupmobile.ui.theme.LevelUpMobileTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val repo = com.example.levelupmobile.domain.repo.FakeShopRepository()
+        // TODO: luego cambiar por ShopRepositoryImpl(Room)
         setContent {
             LevelUpMobileTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
