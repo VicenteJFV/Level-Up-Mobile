@@ -3,6 +3,7 @@ package com.example.levelupmobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
@@ -19,12 +20,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LevelUpMobileTheme {
-                val nav = rememberNavController()
-                val repo: ShopRepository = FakeShopRepository() // luego Room
-                AppNavHost(navController = nav, repo = repo)
+            com.example.levelupmobile.ui.theme.LevelUpMobileTheme {
+                androidx.compose.material3.Surface(
+                    modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.background
+                ) {
+                    val nav = androidx.navigation.compose.rememberNavController()
+                    AppNavHost(
+                        navController = nav,
+                        onAddToCartFn = { /* conectar VM/Repo luego */ }
+                    )
+                }
             }
         }
+
     }
+
 }
 
