@@ -3,6 +3,7 @@ package com.example.levelupmobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
@@ -11,38 +12,29 @@ import androidx.navigation.compose.rememberNavController
 import com.example.levelupmobile.nav.Routes
 import com.example.levelupmobile.ui.screens.*
 import com.example.levelupmobile.ui.theme.LevelUpMobileTheme
+import com.example.levelupmobile.nav.AppNavHost
+import com.example.levelupmobile.domain.repo.FakeShopRepository
+import com.example.levelupmobile.domain.repo.ShopRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val repo = com.example.levelupmobile.domain.repo.FakeShopRepository()
-        // TODO: luego cambiar por ShopRepositoryImpl(Room)
         setContent {
-            LevelUpMobileTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    val nav = rememberNavController()
-                    NavHost(navController = nav, startDestination = Routes.HOME) {
-                        composable(Routes.HOME) {
-                            HomeScreen(
-                                onGoCart = { nav.navigate(Routes.CART) },
-                                onGoCheckout = { nav.navigate(Routes.CHECKOUT) }
-                            )
-                        }
-                        composable(Routes.CART) {
-                            CartScreen(
-                                onGoCheckout = { nav.navigate(Routes.CHECKOUT) },
-                                onBack = { nav.popBackStack() }
-                            )
-                        }
-                        composable(Routes.CHECKOUT) {
-                            CheckoutScreen(
-                                onFinish = { nav.popBackStack(Routes.HOME, false) },
-                                onBack = { nav.popBackStack() }
-                            )
-                        }
-                    }
+            com.example.levelupmobile.ui.theme.LevelUpMobileTheme {
+                androidx.compose.material3.Surface(
+                    modifier = androidx.compose.ui.Modifier.fillMaxSize(),
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.background
+                ) {
+                    val nav = androidx.navigation.compose.rememberNavController()
+                    AppNavHost(
+                        navController = nav,
+                        onAddToCartFn = { /* conectar VM/Repo luego */ }
+                    )
                 }
             }
         }
+
     }
+
 }
+

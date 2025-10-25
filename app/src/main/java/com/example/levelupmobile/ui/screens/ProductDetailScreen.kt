@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(onAddToCart: () -> Unit, onBack: () -> Unit = {}) {
+fun ProductDetailScreen(ui: com.example.levelupmobile.vm.models.ProductUi?, onAddToCart: () -> Unit, onBack: () -> Unit = {}) {
     var show by remember { mutableStateOf(false) }      // entrada con fade/slide
     var pressed by remember { mutableStateOf(false) }   // “pop” del botón agregar
     val scale by animateFloatAsState(
