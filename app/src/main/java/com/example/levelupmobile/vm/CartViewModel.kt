@@ -2,31 +2,37 @@ package com.example.levelupmobile.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.levelupmobile.domain.repo.CartLine
 import com.example.levelupmobile.domain.repo.ShopRepository
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import com.example.levelupmobile.vm.models.CartItemUi
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class CartUi(
-    val lines: List<CartLine> = emptyList(),
-    val subtotal: Long = 0,
-    val iva: Long = 0,
-    val total: Long = 0
+data class CartUiState(
+    val items: List<CartItemUi> = emptyList(),
+    val subtotal: Long = 0L,
+    val iva: Long = 0L,
+    val total: Long = 0L
 )
 
 class CartViewModel(private val repo: ShopRepository) : ViewModel() {
-    val ui: StateFlow<CartUi> = repo.observeCart().map { lines ->
-        val catalog = repo.observeProducts().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList()).value
-            .associateBy { it.id }
-        val subtotal = lines.sumOf { (catalog[it.productId]?.priceNeto ?: 0L) * it.qty }
+    val ui: StateFlow<CartUiState> = combine(
+        repo.observeCart(),
+        repo.observeProducts()
+    ) { lines, products ->
+        val catalog = products.associateBy { it.id } // clave String
+        val items = lines.mapNotNull { line ->
+            val p = catalog[line.productId] ?: return@mapNotNull null
+            CartItemUi(p.id, p.name, p.priceNeto, line.qty)
+        }
+        val subtotal = items.sumOf { it.lineTotal }
         val iva = (subtotal * 0.19).toLong()
-        CartUi(lines, subtotal, iva, subtotal + iva)
-    }.stateIn(viewModelScope, SharingStarted.Lazily, CartUi())
+        CartUiState(items, subtotal, iva, subtotal + iva)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, CartUiState())
 
-    fun add(productId: Int) = viewModelScope.launch { repo.addToCart(productId) }
-    fun setQty(productId: Int, qty: Int) = viewModelScope.launch { repo.setQty(productId, qty) }
-    fun remove(productId: Int) = viewModelScope.launch { repo.removeFromCart(productId) }
+    fun addItem(productId: String, qty: Int = 1) = viewModelScope.launch {
+        repo.addToCart(productId, qty)
+    }
+    fun setQty(productId: String, qty: Int) = viewModelScope.launch { repo.setQty(productId, qty) }
+    fun removeItem(productId: String) = viewModelScope.launch { repo.removeFromCart(productId) }
+    fun clear() = viewModelScope.launch { repo.clearCart() }
 }

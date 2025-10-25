@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.remember
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +16,7 @@ import com.example.levelupmobile.ui.theme.LevelUpMobileTheme
 import com.example.levelupmobile.nav.AppNavHost
 import com.example.levelupmobile.domain.repo.FakeShopRepository
 import com.example.levelupmobile.domain.repo.ShopRepository
+import com.example.levelupmobile.vm.CartViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,9 +28,12 @@ class MainActivity : ComponentActivity() {
                     color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     val nav = androidx.navigation.compose.rememberNavController()
+
+                    val repo = remember { com.example.levelupmobile.domain.repo.FakeShopRepository() }
+                    val cartVm = remember { com.example.levelupmobile.vm.CartViewModel(repo) }
                     AppNavHost(
                         navController = nav,
-                        onAddToCartFn = { /* conectar VM/Repo luego */ }
+                        onAddToCartFn = { pid -> cartVm.addItem(pid)  }
                     )
                 }
             }
