@@ -11,38 +11,20 @@ import androidx.navigation.compose.rememberNavController
 import com.example.levelupmobile.nav.Routes
 import com.example.levelupmobile.ui.screens.*
 import com.example.levelupmobile.ui.theme.LevelUpMobileTheme
+import com.example.levelupmobile.nav.AppNavHost
+import com.example.levelupmobile.domain.repo.FakeShopRepository
+import com.example.levelupmobile.domain.repo.ShopRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val repo = com.example.levelupmobile.domain.repo.FakeShopRepository()
-        // TODO: luego cambiar por ShopRepositoryImpl(Room)
         setContent {
             LevelUpMobileTheme {
-                Surface(color = MaterialTheme.colorScheme.background) {
-                    val nav = rememberNavController()
-                    NavHost(navController = nav, startDestination = Routes.HOME) {
-                        composable(Routes.HOME) {
-                            HomeScreen(
-                                onGoCart = { nav.navigate(Routes.CART) },
-                                onGoCheckout = { nav.navigate(Routes.CHECKOUT) }
-                            )
-                        }
-                        composable(Routes.CART) {
-                            CartScreen(
-                                onGoCheckout = { nav.navigate(Routes.CHECKOUT) },
-                                onBack = { nav.popBackStack() }
-                            )
-                        }
-                        composable(Routes.CHECKOUT) {
-                            CheckoutScreen(
-                                onFinish = { nav.popBackStack(Routes.HOME, false) },
-                                onBack = { nav.popBackStack() }
-                            )
-                        }
-                    }
-                }
+                val nav = rememberNavController()
+                val repo: ShopRepository = FakeShopRepository() // luego Room
+                AppNavHost(navController = nav, repo = repo)
             }
         }
     }
 }
+

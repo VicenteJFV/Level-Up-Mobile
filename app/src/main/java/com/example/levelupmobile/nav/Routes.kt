@@ -1,7 +1,8 @@
-package com.example.levelupmobile.nav
-
-object Routes {
-    const val HOME = "home"
-    const val CART = "cart"
-    const val CHECKOUT = "checkout"
+sealed class Routes(val route: String) {
+    object Home : Routes("home")
+    object ProductDetail : Routes("product/{productId}") {
+        fun create(id: Int) = "product/$id"
+    }
+    object Cart : Routes("cart")
+    object Checkout : Routes("checkout")
 }
