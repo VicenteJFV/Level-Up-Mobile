@@ -3,7 +3,7 @@ package com.example.levelupmobile.domain.repo
 import kotlinx.coroutines.flow.Flow
 
 data class Product(
-    val id: Int,
+    val id: String,
     val name: String,
     val description: String = "",
     val priceNeto: Long,
@@ -14,7 +14,7 @@ data class Product(
 )
 
 data class CartLine(
-    val productId: Int,
+    val productId: String,
     val qty: Int
 )
 
@@ -39,9 +39,9 @@ interface ShopRepository {
     fun observeProducts(): Flow<List<Product>>
     // carrito
     fun observeCart(): Flow<List<CartLine>>
-    suspend fun addToCart(productId: Int, qty: Int = 1)
-    suspend fun setQty(productId: Int, qty: Int)
-    suspend fun removeFromCart(productId: Int)
+    suspend fun addToCart(productId: String, qty: Int = 1)
+    suspend fun setQty(productId: String, qty: Int)
+    suspend fun removeFromCart(productId: String)
     suspend fun clearCart()
 
     // compra

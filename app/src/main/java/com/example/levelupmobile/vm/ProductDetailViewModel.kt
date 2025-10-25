@@ -17,24 +17,22 @@ class ProductDetailViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val pid: String? = savedStateHandle.get<String>(Routes.ProductDetail.ARG)
+
     private val _ui = MutableStateFlow<ProductUi?>(null)
     val ui: StateFlow<ProductUi?> = _ui
-
-    private val pid: Int? = savedStateHandle.get<String>(Routes.ProductDetail.ARG)?.toIntOrNull()
 
     init {
         viewModelScope.launch {
             repo.observeProducts()
-                .map { list ->
-                    val p = pid?.let { idInt -> list.firstOrNull { it.id == idInt } }
-                    p?.toUi()
-                }
+                .map { list -> list.firstOrNull { it.id == pid }?.toUi() }
                 .collect { _ui.value = it }
         }
     }
 
     fun addToCart() {
-        val id = pid ?: return
-        viewModelScope.launch { repo.addToCart(id) }
+        pid ?: return
+        viewModelScope.launch { repo.addToCart(pid) }
     }
 }
+
