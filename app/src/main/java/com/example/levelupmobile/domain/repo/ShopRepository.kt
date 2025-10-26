@@ -1,38 +1,10 @@
 package com.example.levelupmobile.domain.repo
 
+import com.example.levelupmobile.domain.model.CartLine
+import com.example.levelupmobile.domain.model.CheckoutForm
+import com.example.levelupmobile.domain.model.OrderSummary
+import com.example.levelupmobile.domain.model.Product
 import kotlinx.coroutines.flow.Flow
-
-data class Product(
-    val id: String,
-    val name: String,
-    val description: String = "",
-    val priceNeto: Long,
-    val ivaRate: Double = 0.19,
-    val imageUrl: String? = null,
-    val stock: Int = 999,
-    val categoryId: Int? = null
-)
-
-data class CartLine(
-    val productId: String,
-    val qty: Int
-)
-
-data class OrderSummary(
-    val orderId: Long,
-    val totalNeto: Long,
-    val iva: Long,
-    val total: Long,
-    val createdAt: Long = System.currentTimeMillis()
-)
-
-data class CheckoutForm(
-    val name: String,
-    val phone: String,
-    val address: String,
-    val deliveryMethod: String,
-    val paymentMethod: String
-)
 
 interface ShopRepository {
     // catálogo

@@ -1,0 +1,5 @@
+[
+  {"id":"CO001","name":"PlayStation 5","description":"Consola","priceNeto":549990},
+  {"id":"JM001","name":"Catan","description":"Juego de mesa","priceNeto":29990},
+  {"id":"MS001","name":"Mouse Logitech G502","description":"Gaming","priceNeto":49990}
+]

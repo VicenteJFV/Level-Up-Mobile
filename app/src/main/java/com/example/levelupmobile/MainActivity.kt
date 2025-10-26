@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -29,7 +30,10 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val nav = androidx.navigation.compose.rememberNavController()
 
-                    val repo = remember { com.example.levelupmobile.domain.repo.FakeShopRepository() }
+                    val context = LocalContext.current
+                    val db = remember { com.example.levelupmobile.data.db.AppDatabase.get(context) }
+                    val repo = remember { com.example.levelupmobile.data.local.ShopRepositoryImpl(db.productDao(), db.cartDao()) }
+
                     val cartVm = remember { com.example.levelupmobile.vm.CartViewModel(repo) }
                     AppNavHost(
                         navController = nav,
