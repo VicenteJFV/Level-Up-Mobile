@@ -2,7 +2,7 @@ package com.example.levelupmobile.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.levelupmobile.domain.repo.Product
+import com.example.levelupmobile.domain.model.Product
 import com.example.levelupmobile.domain.repo.ShopRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

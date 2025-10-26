@@ -14,7 +14,7 @@ import com.example.levelupmobile.ui.theme.*
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.res.painterResource
 
-// 👇 imports de animación
+// Animaciones
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -25,9 +25,16 @@ import androidx.compose.animation.core.spring
 import androidx.compose.ui.draw.scale
 import kotlinx.coroutines.delay
 
+// 👉 Importa tu extensión de precio
+import com.example.levelupmobile.vm.models.toCLP
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(ui: com.example.levelupmobile.vm.models.ProductUi?, onAddToCart: () -> Unit, onBack: () -> Unit = {}) {
+fun ProductDetailScreen(
+    ui: com.example.levelupmobile.vm.models.ProductUi?,
+    onAddToCart: () -> Unit,
+    onBack: () -> Unit = {}
+) {
     var show by remember { mutableStateOf(false) }      // entrada con fade/slide
     var pressed by remember { mutableStateOf(false) }   // “pop” del botón agregar
     val scale by animateFloatAsState(
@@ -41,33 +48,46 @@ fun ProductDetailScreen(ui: com.example.levelupmobile.vm.models.ProductUi?, onAd
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("🎯 Detalle del Producto", style = MaterialTheme.typography.titleLarge, color = ElectricBlue) },
+                title = {
+                    Text(
+                        "🎯 Detalle del Producto",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = ElectricBlue
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
             )
         },
         containerColor = BlackBackground,
         bottomBar = {
             Row(
-                Modifier.fillMaxWidth().padding(12.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(
                     onClick = onBack,
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = ElectricBlue),
                     border = ButtonDefaults.outlinedButtonBorder
-                ) { Text("Volver") }
+                ) {
+                    Text("Volver")
+                }
 
-                // Botón “Agregar” con pequeño pop
+                // Botón “Agregar” con pequeño pop; se habilita solo cuando hay datos
                 AppButton(
-                    text = "Agregar al carrito",
+                    text = if (ui == null) "Cargando..." else "Agregar al carrito",
                     onClick = {
-                        pressed = true
-                        onAddToCart()
+                        if (ui != null) {
+                            pressed = true
+                            onAddToCart()
+                        }
                     },
                     modifier = Modifier
                         .weight(1f)
                         .scale(scale),
-                    type = ButtonType.Secondary
+                    type = ButtonType.Secondary,
+                    enabled = ui != null
                 )
             }
         }
@@ -94,24 +114,41 @@ fun ProductDetailScreen(ui: com.example.levelupmobile.vm.models.ProductUi?, onAd
                 )
 
                 Spacer(Modifier.height(16.dp))
+
+                // Nombre real o estado de carga
                 Text(
-                    "Nombre del producto",
-                    style = MaterialTheme.typography.titleLarge.copy(color = NeonGreen, fontSize = 22.sp)
+                    text = ui?.name ?: "Cargando...",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        color = NeonGreen,
+                        fontSize = 22.sp
+                    )
                 )
+
+                // Descripción real o estado de carga
                 Text(
-                    "Descripción breve del producto (placeholder)",
-                    style = MaterialTheme.typography.bodyLarge.copy(color = LightGrayText, fontSize = 16.sp),
+                    text = ui?.description ?: "Cargando descripción...",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = LightGrayText,
+                        fontSize = 16.sp
+                    ),
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
+
+                // Precio formateado en CLP usando tu extensión
+                val priceLabel = ui?.price?.toCLP() ?: "..."
                 Text(
-                    "Precio: \$99.990 CLP",
-                    style = MaterialTheme.typography.bodyLarge.copy(color = ElectricBlue, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    text = "Precio: $priceLabel",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = ElectricBlue,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
                 )
             }
         }
     }
 
-    // reset del “pop” del botón
+    // Reset del “pop” del botón
     LaunchedEffect(pressed) {
         if (pressed) {
             delay(180)
