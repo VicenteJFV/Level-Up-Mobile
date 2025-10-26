@@ -15,13 +15,15 @@ import com.example.levelupmobile.ui.theme.*
  * @param onClick Acción al presionar
  * @param modifier Permite ajustar el tamaño o padding
  * @param type Define el color del botón ("primary" = azul / "secondary" = verde)
+ * @param enabled Habilita o deshabilita el botón
  */
 @Composable
 fun AppButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    type: ButtonType = ButtonType.Primary
+    type: ButtonType = ButtonType.Primary,
+    enabled: Boolean = true    // ✅ agregado
 ) {
     val (bgColor, textColor) = when (type) {
         ButtonType.Primary -> ElectricBlue to BlackBackground
@@ -31,9 +33,12 @@ fun AppButton(
     Button(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,      // ✅ ahora se aplica al botón interno
         colors = ButtonDefaults.buttonColors(
             containerColor = bgColor,
-            contentColor = textColor
+            contentColor = textColor,
+            disabledContainerColor = bgColor.copy(alpha = 0.4f), // opcional
+            disabledContentColor = textColor.copy(alpha = 0.6f)
         ),
         shape = RoundedCornerShape(10.dp)
     ) {
