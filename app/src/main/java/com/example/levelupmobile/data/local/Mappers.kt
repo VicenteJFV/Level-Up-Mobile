@@ -5,16 +5,18 @@ import com.example.levelupmobile.domain.model.CartLine
 import com.example.levelupmobile.domain.model.Product
 import com.example.levelupmobile.domain.repo.*
 
-fun ProductEntity.toDomain() = Product(
-    id = id,
-    name = name,
-    description = description,
-    priceNeto = priceNeto,
-    ivaRate = ivaRate,
-    imageUrl = imageUrl,
-    stock = stock,
-    categoryId = categoryId
-)
+fun ProductEntity.toDomain(): Product =
+    Product(
+        id = id,
+        name = name,
+        description = description,
+        priceNeto = priceNeto,
+        ivaRate = ivaRate,
+        imageUrl = imageUrl,
+        stock = stock,
+        categoryId = categoryId
+    )
+
 
 fun Product.toEntity() = ProductEntity(
     id = id,

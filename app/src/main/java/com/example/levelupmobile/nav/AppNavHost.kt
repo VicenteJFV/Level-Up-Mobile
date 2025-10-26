@@ -1,23 +1,28 @@
 package com.example.levelupmobile.nav
 
+import androidx.compose.foundation.layout.padding // ⬅️ IMPORTA LA EXTENSIÓN
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
+import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
 
-/**
- * onAddToCartFn te deja inyectar qué hacer al agregar al carrito.
- * Por ahora navega sin lógica de datos; más adelante conecta el VM/Repo.
- */
+// Imports para el Text temporal (puedes quitarlos cuando ya no lo uses)
+import androidx.compose.material3.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    onAddToCartFn: (String) -> Unit = {}   // <-- inyectable (VM/Repo luego)
+    repo: ShopRepository,
+    onAddToCartFn: (String) -> Unit = {}
 ) {
     NavHost(
         navController = navController,
@@ -30,28 +35,22 @@ fun AppNavHost(
                     navController.navigate(Routes.ProductDetail.create(pid))
                 },
                 onAddToCart = { pid ->
-                    onAddToCartFn(pid)   // por ahora no hace nada; luego VM.add(pid)
+                    onAddToCartFn(pid)
                 },
                 onGoCart = { navController.navigate(Routes.Cart.route) },
                 onGoCheckout = { navController.navigate(Routes.Checkout.route) }
             )
         }
 
-        // PRODUCT DETAIL (pid por ruta; la UI aún no lo usa directamente)
+        // PRODUCT DETAIL
         composable(
             route = Routes.ProductDetail.route,
-            arguments = listOf(navArgument(Routes.ProductDetail.ARG) { type = NavType.StringType })
-        ) { backStackEntry ->
-            // Repo temporal -> luego se cambia a Room
-            val repo = remember { com.example.levelupmobile.domain.repo.FakeShopRepository() }
-
+            arguments = listOf(
+                navArgument(Routes.ProductDetail.ARG) { type = NavType.StringType }
+            )
+        ) {
             val vm: com.example.levelupmobile.vm.ProductDetailViewModel =
-                androidx.lifecycle.viewmodel.compose.viewModel(
-                    factory = com.example.levelupmobile.vm.factory.ProductDetailVMFactory(
-                        repo = repo,
-                        savedStateHandle = backStackEntry.savedStateHandle
-                    )
-                )
+                viewModel(factory = com.example.levelupmobile.vm.factory.ProductDetailVMFactory(repo))
 
             val ui = vm.ui.collectAsState().value
 
@@ -64,7 +63,19 @@ fun AppNavHost(
 
         // CART
         composable(Routes.Cart.route) {
+            // ViewModel del carrito usando el MISMO repo compartido
+            val vm: com.example.levelupmobile.vm.CartViewModel =
+                androidx.lifecycle.viewmodel.compose.viewModel(
+                    factory = com.example.levelupmobile.vm.factory.CartVMFactory(repo)
+                )
+
+            val ui = vm.ui.collectAsState().value
+
             CartScreen(
+                ui = ui,
+                onInc = { vm.inc(it) },
+                onDec = { vm.dec(it) },
+                onRemove = { vm.removeItem(it) },
                 onGoCheckout = { navController.navigate(Routes.Checkout.route) },
                 onBack = { navController.popBackStack() }
             )

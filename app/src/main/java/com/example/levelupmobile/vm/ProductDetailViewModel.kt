@@ -9,7 +9,6 @@ import com.example.levelupmobile.vm.models.ProductUi
 import com.example.levelupmobile.vm.models.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
@@ -17,22 +16,21 @@ class ProductDetailViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val pid: String? = savedStateHandle.get<String>(Routes.ProductDetail.ARG)
+    private val code: String = savedStateHandle.get<String>(Routes.ProductDetail.ARG) ?: ""
 
     private val _ui = MutableStateFlow<ProductUi?>(null)
     val ui: StateFlow<ProductUi?> = _ui
 
     init {
-        viewModelScope.launch {
-            repo.observeProducts()
-                .map { list -> list.firstOrNull { it.id == pid }?.toUi() }
-                .collect { _ui.value = it }
-        }
+        load()
     }
 
-    fun addToCart() {
-        pid ?: return
-        viewModelScope.launch { repo.addToCart(pid) }
+    private fun load() = viewModelScope.launch {
+        val p = repo.getById(code)
+        _ui.value = p?.toUi()
+    }
+
+    fun addToCart() = viewModelScope.launch {
+        if (code.isNotBlank()) repo.addToCart(code, 1)
     }
 }
-

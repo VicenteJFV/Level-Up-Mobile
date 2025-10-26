@@ -4,13 +4,13 @@ import com.example.levelupmobile.domain.model.CartLine
 import com.example.levelupmobile.domain.model.CheckoutForm
 import com.example.levelupmobile.domain.model.OrderSummary
 import com.example.levelupmobile.domain.model.Product
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 
 class FakeShopRepository : ShopRepository {
 
+    // Catálogo de ejemplo
     private val products = listOf(
         Product("CO001", "PlayStation 5", "Consola...", 549_990),
         Product("JM001", "Catan", "Juego de mesa...", 29_990),
@@ -18,9 +18,20 @@ class FakeShopRepository : ShopRepository {
     )
 
     private val productsFlow = MutableStateFlow(products)
+
+    // Carrito en memoria
     private val cart = MutableStateFlow<List<CartLine>>(emptyList())
 
+    // ---------- Catálogo ----------
     override fun observeProducts(): Flow<List<Product>> = productsFlow
+
+    override suspend fun getById(id: String): Product? =
+        products.firstOrNull { it.id == id }
+
+    override fun observeById(id: String): Flow<Product?> =
+        productsFlow.map { list -> list.firstOrNull { it.id == id } }
+
+    // ---------- Carrito ----------
     override fun observeCart(): Flow<List<CartLine>> = cart
 
     override suspend fun addToCart(productId: String, qty: Int) {
@@ -36,9 +47,9 @@ class FakeShopRepository : ShopRepository {
     }
 
     override suspend fun setQty(productId: String, qty: Int) {
-        cart.value = cart.value.map {
-            if (it.productId == productId) it.copy(qty = qty) else it
-        }.filter { it.qty > 0 }
+        cart.value = cart.value
+            .map { if (it.productId == productId) it.copy(qty = qty) else it }
+            .filter { it.qty > 0 }
     }
 
     override suspend fun removeFromCart(productId: String) {
@@ -49,12 +60,11 @@ class FakeShopRepository : ShopRepository {
         cart.value = emptyList()
     }
 
+    // ---------- Checkout ----------
     override suspend fun checkout(form: CheckoutForm): OrderSummary {
-        // 1 Tomamos el carrito actual
         val lines = cart.value
         val catalog = products.associateBy { it.id }
 
-        // 2 Calculamos el total neto (sin IVA)
         var totalNeto = 0L
         lines.forEach { line ->
             val product = catalog[line.productId]
@@ -62,23 +72,18 @@ class FakeShopRepository : ShopRepository {
                 totalNeto += product.priceNeto * line.qty
             }
         }
-
-        // 3 Calculamos IVA (19%) y total final
         val iva = (totalNeto * 0.19).toLong()
         val total = totalNeto + iva
 
-        // 4️ Limpiamos carrito (simulando compra finalizada)
+        // vacía el carrito tras comprar
         cart.value = emptyList()
 
-        // 5️ Retornamos resumen de la orden
         return OrderSummary(
-            orderId = System.currentTimeMillis(), // único por timestamp
+            orderId = System.currentTimeMillis(),
             totalNeto = totalNeto,
             iva = iva,
             total = total,
             createdAt = System.currentTimeMillis()
         )
     }
-
 }
-

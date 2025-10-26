@@ -14,6 +14,12 @@ class ShopRepositoryImpl(
     private val cartDao: CartDao
 ) : ShopRepository {
 
+    override suspend fun getById(id: String): Product? =
+        productDao.getById(id)?.toDomain()
+
+    override fun observeById(id: String): Flow<Product?> =
+        productDao.observeById(id).map { it?.toDomain() }
+
     // 🔹 Observa productos
     override fun observeProducts(): Flow<List<Product>> =
         productDao.observeAll().map { list -> list.map { it.toDomain() } }
