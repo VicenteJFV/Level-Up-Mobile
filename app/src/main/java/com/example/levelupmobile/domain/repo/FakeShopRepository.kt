@@ -1,31 +1,37 @@
 package com.example.levelupmobile.domain.repo
 
+import com.example.levelupmobile.domain.model.CartLine
+import com.example.levelupmobile.domain.model.CheckoutForm
+import com.example.levelupmobile.domain.model.OrderSummary
+import com.example.levelupmobile.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 
 class FakeShopRepository : ShopRepository {
 
+    // Catálogo de ejemplo
     private val products = listOf(
-        Product("CO001", "PlayStation 5", "Consola de nueva generación", 549_990),
-        Product("JM001", "Catan", "Juego de mesa clásico", 29_990),
+        Product("CO001", "PlayStation 5", "Consola...", 549_990),
+        Product("JM001", "Catan", "Juego de mesa...", 29_990),
         Product("MS001", "Mouse Logitech G502", "Gaming mouse", 49_990),
     )
 
     private val productsFlow = MutableStateFlow(products)
+
+    // Carrito en memoria
     private val cart = MutableStateFlow<List<CartLine>>(emptyList())
 
-    // Catálogo
+    // ---------- Catálogo ----------
     override fun observeProducts(): Flow<List<Product>> = productsFlow
 
-    // 🔽 Detalle
     override suspend fun getById(id: String): Product? =
         products.firstOrNull { it.id == id }
 
     override fun observeById(id: String): Flow<Product?> =
         productsFlow.map { list -> list.firstOrNull { it.id == id } }
 
-    // Carrito
+    // ---------- Carrito ----------
     override fun observeCart(): Flow<List<CartLine>> = cart
 
     override suspend fun addToCart(productId: String, qty: Int) {
@@ -54,7 +60,7 @@ class FakeShopRepository : ShopRepository {
         cart.value = emptyList()
     }
 
-    // Compra
+    // ---------- Checkout ----------
     override suspend fun checkout(form: CheckoutForm): OrderSummary {
         val lines = cart.value
         val catalog = products.associateBy { it.id }
@@ -62,12 +68,14 @@ class FakeShopRepository : ShopRepository {
         var totalNeto = 0L
         lines.forEach { line ->
             val product = catalog[line.productId]
-            if (product != null) totalNeto += product.priceNeto * line.qty
+            if (product != null) {
+                totalNeto += product.priceNeto * line.qty
+            }
         }
-
         val iva = (totalNeto * 0.19).toLong()
         val total = totalNeto + iva
 
+        // vacía el carrito tras comprar
         cart.value = emptyList()
 
         return OrderSummary(
