@@ -4,9 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.levelupmobile.ui.components.LocationButton
+import com.example.levelupmobile.ui.components.reverseGeocode
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.CheckoutUi
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -19,7 +23,8 @@ fun CheckoutScreen(
     onPayment: (String) -> Unit,
     onSubmit: () -> Unit,
     onBack: () -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    onSetLocation: (Double, Double) -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -87,6 +92,26 @@ fun CheckoutScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Helper(ui.errors["address"])
+
+            val ctx = LocalContext.current
+            val scope = rememberCoroutineScope()
+
+            LocationButton(
+                onLocationReady = { lat, lng ->
+                    onSetLocation(lat, lng)
+
+                    scope.launch {
+                        val addr = reverseGeocode(ctx, lat, lng)
+                        if (addr != null) {
+                            onAddress(addr)
+                        } else {
+                            // Fallback: deja las coordenadas si no se pudo resolver
+                            onAddress("$lat, $lng")
+                            snackbarHostState.showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
+                        }
+                    }
+                }
+            )
 
             // Método de entrega
             DeliveryDropdown(
@@ -164,7 +189,7 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
 }
 
 // ----------------------
-// 🔽 SELECT: PAGO (oscuro personalizado)
+// SELECT: PAGO (oscuro personalizado)
 // ----------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -124,7 +124,8 @@ fun AppNavHost(
                 onPayment = vm::onPayment,
                 onSubmit = vm::submit,
                 onBack = { navController.popBackStack() },
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                onSetLocation = vm::setLocation
             )
         }
 

@@ -25,6 +25,9 @@ sealed interface CheckoutEvent {
     data class Error(val message: String) : CheckoutEvent
 }
 
+//Ubi
+data class DeliveryLocation(val lat: Double, val lng: Double)
+
 class CheckoutViewModel(
     private val repo: ShopRepository
 ) : ViewModel() {
@@ -87,5 +90,13 @@ class CheckoutViewModel(
                 paymentMethod = s.payment
             )
         } else null
+    }
+
+    //Ubi
+    private val _location = MutableStateFlow<DeliveryLocation?>(null)
+    val location: StateFlow<DeliveryLocation?> = _location
+
+    fun setLocation(lat: Double, lng: Double) {
+        _location.value = DeliveryLocation(lat, lng)
     }
 }
