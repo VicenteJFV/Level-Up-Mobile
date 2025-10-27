@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.levelupmobile.ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
@@ -17,23 +16,18 @@ data class ProductItem(
     val id: String,
     val name: String,
     val priceLabel: String,
-    val imageUrl: String? = null
+    val imageUrl: String? = null   // ← dejamos el nombre del drawable (p. ej. "ps5")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    items: List<ProductItem>,              // 👈 ahora recibe la lista
     onOpenProduct: (String) -> Unit,
     onAddToCart: (String) -> Unit,
     onGoCart: () -> Unit,
     onGoCheckout: () -> Unit
 ) {
-    val mock = listOf(
-        ProductItem("CO001", "PlayStation 5", "$549.990 CLP", null),
-        ProductItem("JM001", "Catan", "$29.990 CLP", null),
-        ProductItem("MS001", "Mouse Logitech G502", "$49.990 CLP", null)
-    )
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -77,11 +71,11 @@ fun HomeScreen(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(mock) { p ->
+            items(items) { p ->                          // 👈 usa la lista recibida
                 ProductCard(
                     name = p.name,
                     price = p.priceLabel,
-                    imageUrl = p.imageUrl,
+                    imageUrl = p.imageUrl,              // nombre del drawable (ej: "ps5")
                     onClick = { onOpenProduct(p.id) },
                     onAddToCart = { onAddToCart(p.id) }
                 )

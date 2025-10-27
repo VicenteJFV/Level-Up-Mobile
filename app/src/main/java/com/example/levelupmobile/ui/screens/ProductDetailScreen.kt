@@ -1,5 +1,6 @@
 package com.example.levelupmobile.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,6 +14,8 @@ import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.theme.*
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 
 // Animaciones
 import androidx.compose.animation.AnimatedVisibility
@@ -106,11 +109,17 @@ fun ProductDetailScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    painter = painterResource(android.R.drawable.ic_menu_gallery),
-                    contentDescription = "Imagen del producto",
-                    tint = LightGrayText,
-                    modifier = Modifier.size(100.dp)
+                // 📸 Imagen desde drawable por nombre (ui.imageUrl), o placeholder si null
+                val imageRes = ui?.imageUrl?.let {
+                    val ctx = LocalContext.current
+                    ctx.resources.getIdentifier(it, "drawable", ctx.packageName)
+                } ?: android.R.drawable.ic_menu_gallery
+
+                Image(
+                    painter = painterResource(imageRes),
+                    contentDescription = ui?.name ?: "Imagen del producto",
+                    modifier = Modifier.size(180.dp),
+                    contentScale = ContentScale.Crop
                 )
 
                 Spacer(Modifier.height(16.dp))
