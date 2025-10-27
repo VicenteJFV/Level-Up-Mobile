@@ -168,9 +168,6 @@ private fun Helper(msg: String?) {
     }
 }
 
-// ----------------------
-// 🔽 SELECT: ENTREGA (oscuro personalizado)
-// ----------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
@@ -221,9 +218,6 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
     }
 }
 
-// ----------------------
-// SELECT: PAGO (oscuro personalizado)
-// ----------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
