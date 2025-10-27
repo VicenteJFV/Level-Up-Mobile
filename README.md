@@ -5,6 +5,31 @@ Su objetivo es ofrecer una experiencia moderna, fluida y visualmente atractiva p
 
 ---
 
+🧪 Instalación y pruebas locales
+✅ Requisitos
+Android Studio (Giraffe o superior recomendado)
+JDK 17 (el que instala Android Studio está bien)
+Android SDK con al menos una imagen de sistema (Android 12 o superior recomendado)
+Gradle Wrapper incluido en el proyecto (usa ./gradlew)
+
+Nota: La app se inicializa con datos desde assets/products.json y persiste en Room. Si quieres “recargar” datos, borra el almacenamiento de la app desde Ajustes.
+
+---
+
+1) Clonar y abrir el proyecto
+git clone https://github.com/VicenteJFV/Level-Up-Mobile.git
+cd levelupmobile
+ 
+
+Abre la carpeta en Android Studio.
+Espera a que sincronice dependencias (Gradle Sync).
+
+2) Ejecutar en emulador
+En Android Studio, abre Device Manager → crea un Virtual Device (Small Phone recomendado).
+Selecciona una imagen de sistema (API 31+ recomendado).
+Presiona Run ▶️ en app.
+
+
 ## 🧠 Tech Stack
 
 - **Jetpack Compose (Material 3)** – interfaz moderna y declarativa  
