@@ -18,10 +18,10 @@ import com.example.levelupmobile.ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.CartUiState
-import com.example.levelupmobile.vm.models.CartItemUi      // ✅ paquete correcto
+import com.example.levelupmobile.vm.models.CartItemUi
 import com.example.levelupmobile.vm.models.toCLP
 import androidx.compose.material3.Divider
-import androidx.compose.foundation.layout.PaddingValues    // para contentPadding en botones
+import androidx.compose.foundation.layout.PaddingValues
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +75,7 @@ fun CartScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(ui.items, key = { it.productId }) { item ->   // ✅ usa productId
+                    items(ui.items, key = { it.productId }) { item ->
                         CartRow(
                             item = item,
                             onInc = onInc,
@@ -154,7 +154,7 @@ private fun CartRow(
             val context = LocalContext.current
             val imageRes = item.imageUrl
                 ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
-                ?.takeIf { it != 0 }                  // ✅ evita id inválido 0
+                ?.takeIf { it != 0 }
                 ?: android.R.drawable.ic_menu_gallery
 
             Image(
@@ -195,19 +195,19 @@ private fun CartRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 OutlinedButton(
-                    onClick = { onDec(item.productId) },                    // ✅ productId
+                    onClick = { onDec(item.productId) },
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ) { Text("−") }
 
                 Text("${item.qty}", color = LightGrayText)
 
                 OutlinedButton(
-                    onClick = { onInc(item.productId) },                    // ✅ productId
+                    onClick = { onInc(item.productId) },
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ) { Text("+") }
             }
 
-            TextButton(onClick = { onRemove(item.productId) }) {            // ✅ productId
+            TextButton(onClick = { onRemove(item.productId) }) {
                 Text("Eliminar", color = LightGrayText)
             }
         }
