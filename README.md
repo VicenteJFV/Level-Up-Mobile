@@ -1,35 +1,61 @@
-# 🎮 LevelUp Mobile (Kotlin + Compose)
+🎮 Level-Up Mobile (Kotlin + Jetpack Compose)
 
-Esqueleto base de app e-commerce sin login (**Evaluación Parcial 2**).
+🧠 Tech Stack
 
-## 🧠 Tech
-- Jetpack Compose (Material 3)
-- Navigation Compose
-- MVVM (stubs de ViewModel y Repository)
-- Coil (carga de imágenes)
+Jetpack Compose (Material 3) – interfaz moderna y declarativa
 
-## 🧩 Estructura
-- `ui/` pantallas y componentes
-    - **screens:** Home, ProductDetail, Cart, Checkout
-    - **components:** ProductCard, AppButton, InputField
-    - **theme:** paleta Level-Up (negro, azul eléctrico, verde neón)
-- `nav/` rutas de navegación
-- `vm/` viewmodels (stubs)
-- `domain/repo/` contrato del repositorio
-- (próximo) `data/` Room + DataStore
+Navigation Compose – flujo de pantallas
 
-## ✅ Avance Actual
-- Theme personalizado **Level-Up Gamer**
-- Pantallas funcionales con navegación y diseño Material 3
-- Formularios **validados visualmente** (Checkout)
-- Componentes reutilizables (botones, tarjetas, inputs)
-- **Animaciones**: entrada en Detalle + “pop” al agregar productos
+MVVM + StateFlow + Coroutines – arquitectura limpia y reactiva
 
-## 📌 Próximas tareas
-- [ ] Implementar Room (entities/daos/db) + KSP 2.0.21-1.0.27
-- [ ] ShopRepository (impl) y ViewModels
-- [ ] Conectar UI con datos reales (catálogo y carrito persistente)
-- [ ] Recursos nativos: Maps y compartir por WhatsApp
-- [ ] Reseñas, referidos y puntos
+Room Database – persistencia local del catálogo y carrito
 
----
+JSON (products.json) – carga inicial de productos
+
+🧩 Estructura del Proyecto
+com.example.levelupmobile/
+│
+├── ui/
+│   ├── screens/        → Home, ProductDetail, Cart, Checkout
+│   ├── components/     → ProductCard, AppButton, InputField
+│   └── theme/          → Paleta Level-Up (negro, azul eléctrico, verde neón)
+│
+├── nav/                → Rutas y AppNavHost
+├── vm/                 → ViewModels (CartVM, ProductDetailVM)
+├── domain/             → Modelos y contratos de repositorio
+├── data/               → Room (entities, dao, db, impl)
+│   └── assets/products.json
+└── MainActivity.kt
+
+✅ Estado Actual
+
+Theme personalizado Level-Up Gamer
+
+Pantallas funcionales con navegación fluida
+
+Cálculo automático de subtotal, IVA y total
+
+Carga inicial de productos desde JSON + persistencia Room
+
+UI reactiva con StateFlow
+
+Animaciones suaves y componentes reutilizables
+
+🚀 Próximos Pasos
+
+Reseñas y puntuación de productos
+
+Login y registro de usuarios
+
+Integración con Google Maps y WhatsApp Share
+
+Sincronización con API externa
+
+Sistema de referidos o puntos
+
+👤 Autores
+
+Vicente Farias Vera
+Felipe Villalobos Villalobos
+Emilio Jaramillo Luna
+DUOC UC – Ingeniería en Informática (2025)
