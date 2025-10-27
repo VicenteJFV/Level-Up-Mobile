@@ -32,27 +32,28 @@ fun AppNavHost(
         // HOME
         composable(Routes.Home.route) {
             val products = repo.observeProducts().collectAsState(initial = emptyList()).value
-            // DEBUG temporal para ver qué trae Room
-            println("PRODUCTS -> " + products.joinToString { "${it.id}:${it.imageUrl}" })
-
+            val cartLines = repo.observeCart().collectAsState(initial = emptyList()).value
+            val cartCount = cartLines.sumOf { it.qty }
 
             val uiItems = products.map {
                 ProductItem(
                     id = it.id,
                     name = it.name,
-                    priceLabel = it.priceNeto.toCLP(), // si prefieres formatear aquí
-                    imageUrl = it.imageUrl             // ← viene de tu JSON en assets
+                    priceLabel = it.priceNeto.toCLP(),
+                    imageUrl = it.imageUrl
                 )
             }
 
             HomeScreen(
                 items = uiItems,
+                cartCount = cartCount, // 👈 nuevo
                 onOpenProduct = { pid -> navController.navigate(Routes.ProductDetail.create(pid)) },
                 onAddToCart = { pid -> onAddToCartFn(pid) },
                 onGoCart = { navController.navigate(Routes.Cart.route) },
                 onGoCheckout = { navController.navigate(Routes.Checkout.route) }
             )
         }
+
 
 
         // PRODUCT DETAIL
