@@ -8,7 +8,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.levelupmobile.R
 
-// 🧩 Importa tus fuentes (deberás agregarlas a res/font/)
 val Roboto = FontFamily(
     Font(R.font.roboto_regular, FontWeight.Normal),
     Font(R.font.roboto_bold, FontWeight.Bold)
@@ -19,7 +18,6 @@ val Orbitron = FontFamily(
     Font(R.font.orbitron_bold, FontWeight.Bold)
 )
 
-// 🕹️ Tipografía general
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = Orbitron,

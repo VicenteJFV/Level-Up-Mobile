@@ -3,21 +3,12 @@ package com.example.levelupmobile.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.levelupmobile.domain.repo.ShopRepository
+import com.example.levelupmobile.vm.models.CartItemUi    // ✅ usamos la data class global
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-
-// --- Definición LOCAL para evitar problemas de paquetes/imports ---
-data class CartItemUi(
-    val id: String,
-    val name: String,
-    val price: Long,     // precio unitario
-    val qty: Int
-) {
-    val lineTotal: Long get() = price * qty
-}
 
 data class CartUiState(
     val items: List<CartItemUi> = emptyList(),
@@ -32,15 +23,17 @@ class CartViewModel(private val repo: ShopRepository) : ViewModel() {
         repo.observeCart(),
         repo.observeProducts()
     ) { lines, products ->
+
         val catalog = products.associateBy { it.id }
 
         val items: List<CartItemUi> = lines.mapNotNull { line ->
             val p = catalog[line.productId] ?: return@mapNotNull null
             CartItemUi(
-                id = p.id,
+                productId = p.id,
                 name = p.name,
-                price = p.priceNeto, // del dominio
-                qty = line.qty
+                price = p.priceNeto,
+                qty = line.qty,
+                imageUrl = p.imageUrl
             )
         }
 
@@ -56,7 +49,7 @@ class CartViewModel(private val repo: ShopRepository) : ViewModel() {
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, CartUiState())
 
-    // Acciones
+    // --- Acciones ---
     fun addItem(productId: String, qty: Int = 1) = viewModelScope.launch {
         repo.addToCart(productId, qty)
     }
@@ -71,11 +64,11 @@ class CartViewModel(private val repo: ShopRepository) : ViewModel() {
 
     fun clear() = viewModelScope.launch { repo.clearCart() }
 
-    // Helpers +/-
+    // --- Helpers (+ / -) ---
     fun inc(productId: String) = viewModelScope.launch { repo.addToCart(productId, 1) }
 
     fun dec(productId: String) = viewModelScope.launch {
-        val current = ui.value.items.firstOrNull { it.id == productId }?.qty ?: 0
+        val current = ui.value.items.firstOrNull { it.productId == productId }?.qty ?: 0
         val next = (current - 1).coerceAtLeast(0)
         if (next == 0) repo.removeFromCart(productId) else repo.setQty(productId, next)
     }

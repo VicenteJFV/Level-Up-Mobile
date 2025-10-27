@@ -1,5 +1,51 @@
 [
-  {"id":"CO001","name":"PlayStation 5","description":"Consola","priceNeto":549990},
-  {"id":"JM001","name":"Catan","description":"Juego de mesa","priceNeto":29990},
-  {"id":"MS001","name":"Mouse Logitech G502","description":"Gaming","priceNeto":49990}
+  {
+    "id": "CO001",
+    "name": "PlayStation 5",
+    "description": "Consola",
+    "priceNeto": 549990,
+    "imageUrl": "ps5"
+  },
+  {
+    "id": "JM001",
+    "name": "Catan",
+    "description": "Juego de mesa",
+    "priceNeto": 29990,
+    "imageUrl": "catan"
+  },
+  {
+    "id": "MS001",
+    "name": "Mouse Logitech G502",
+    "description": "Gaming mouse",
+    "priceNeto": 49990,
+    "imageUrl": "g502"
+  },
+  {
+    "id": "JM002",
+    "name": "Carcassone",
+    "description": "Juego de mesa",
+    "priceNeto": 249990,
+    "imageUrl": "carcassonne"
+  },
+  {
+    "id": "AC002",
+    "name": "Auriculares Gamer HyperX Cloud II",
+    "description": "Accesorios",
+    "priceNeto": 79990,
+    "imageUrl": "hyperx"
+  },
+  {
+    "id": "SG001",
+    "name": "Silla Gamer Secretlab Titan",
+    "description": "Sillas Gamer",
+    "priceNeto": 349990,
+    "imageUrl": "secretlabtitan"
+  },
+  {
+    "id": "AC001",
+    "name": "Controlador Inalámbrico Xbox Series X ",
+    "description": "Accesorios",
+    "priceNeto": 59990,
+    "imageUrl": "xboxcontroller"
+  }
 ]

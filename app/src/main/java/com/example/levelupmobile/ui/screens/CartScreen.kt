@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/levelupmobile/ui/screens/CartScreen.kt
 package com.example.levelupmobile.ui.screens
 
 import androidx.compose.foundation.Image
@@ -10,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -17,9 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.example.levelupmobile.ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.theme.*
-import com.example.levelupmobile.vm.CartItemUi
 import com.example.levelupmobile.vm.CartUiState
+import com.example.levelupmobile.vm.models.CartItemUi
 import com.example.levelupmobile.vm.models.toCLP
+import androidx.compose.material3.Divider
+import androidx.compose.foundation.layout.PaddingValues
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,7 +75,7 @@ fun CartScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(ui.items, key = { it.id }) { item ->
+                    items(ui.items, key = { it.productId }) { item ->
                         CartRow(
                             item = item,
                             onInc = onInc,
@@ -147,8 +149,16 @@ private fun CartRow(
     ) {
         // Fila superior: imagen + (nombre, precio)
         Row(verticalAlignment = Alignment.CenterVertically) {
+
+            // Carga del drawable si existe
+            val context = LocalContext.current
+            val imageRes = item.imageUrl
+                ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
+                ?.takeIf { it != 0 }
+                ?: android.R.drawable.ic_menu_gallery
+
             Image(
-                painter = painterResource(android.R.drawable.ic_menu_gallery),
+                painter = painterResource(imageRes),
                 contentDescription = item.name,
                 modifier = Modifier.size(72.dp),
                 contentScale = ContentScale.Crop
@@ -185,22 +195,21 @@ private fun CartRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 OutlinedButton(
-                    onClick = { onDec(item.id) },
+                    onClick = { onDec(item.productId) },
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ) { Text("−") }
 
                 Text("${item.qty}", color = LightGrayText)
 
                 OutlinedButton(
-                    onClick = { onInc(item.id) },
+                    onClick = { onInc(item.productId) },
                     contentPadding = PaddingValues(horizontal = 12.dp)
                 ) { Text("+") }
             }
 
-            TextButton(onClick = { onRemove(item.id) }) {
+            TextButton(onClick = { onRemove(item.productId) }) {
                 Text("Eliminar", color = LightGrayText)
             }
         }
     }
 }
-

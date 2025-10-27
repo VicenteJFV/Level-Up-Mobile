@@ -1,6 +1,7 @@
-// ProductCard.kt (reemplaza el contenido del composable ProductCard)
+// app/src/main/java/com/example/levelupmobile/ui/components/ProductCard.kt
 package com.example.levelupmobile.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,16 +11,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.LaunchedEffect
-import coil.compose.AsyncImage
-import com.example.levelupmobile.ui.theme.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.ui.draw.scale
+import com.example.levelupmobile.ui.theme.*
 import kotlinx.coroutines.delay
 
 @Composable
@@ -52,23 +52,21 @@ fun ProductCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (imageUrl != null) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = name,
-                    modifier = Modifier
-                        .height(140.dp)
-                        .fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                Icon(
-                    painter = painterResource(android.R.drawable.ic_menu_gallery),
-                    contentDescription = null,
-                    tint = LightGrayText,
-                    modifier = Modifier.size(100.dp)
-                )
-            }
+            //Carga drawable por nombre
+            val context = LocalContext.current
+            val imageRes = imageUrl
+                ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
+                ?.takeIf { it != 0 }
+                ?: android.R.drawable.ic_menu_gallery
+
+            Image(
+                painter = painterResource(imageRes),
+                contentDescription = name,
+                modifier = Modifier
+                    .height(140.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
 
             Spacer(Modifier.height(12.dp))
             Text(
@@ -108,7 +106,6 @@ fun ProductCard(
                     pressed = false
                 }
             }
-
         }
     }
 }

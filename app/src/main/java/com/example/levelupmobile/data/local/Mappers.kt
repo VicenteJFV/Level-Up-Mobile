@@ -3,7 +3,6 @@ package com.example.levelupmobile.data.local
 import com.example.levelupmobile.data.entity.*
 import com.example.levelupmobile.domain.model.CartLine
 import com.example.levelupmobile.domain.model.Product
-import com.example.levelupmobile.domain.repo.*
 
 fun ProductEntity.toDomain(): Product =
     Product(

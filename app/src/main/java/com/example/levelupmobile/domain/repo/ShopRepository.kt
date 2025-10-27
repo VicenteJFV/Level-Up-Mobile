@@ -7,10 +7,10 @@ import com.example.levelupmobile.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ShopRepository {
-    // Catálogo
+    //Catálogo
     fun observeProducts(): Flow<List<Product>>
 
-    // 🔽 NUEVOS: lookup por ID (detalle)
+    //lookup por ID (detalle)
     suspend fun getById(id: String): Product?
     fun observeById(id: String): Flow<Product?>
 

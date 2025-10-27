@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.example.levelupmobile.ui.theme.*
 
 /**
- * Botón reutilizable con estilo Level-Up Gamer 🎮
+ * Botón reutilizable con estilo Level-Up Gamer
  *
  * @param text Texto del botón
  * @param onClick Acción al presionar
@@ -23,7 +23,7 @@ fun AppButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     type: ButtonType = ButtonType.Primary,
-    enabled: Boolean = true    // ✅ agregado
+    enabled: Boolean = true
 ) {
     val (bgColor, textColor) = when (type) {
         ButtonType.Primary -> ElectricBlue to BlackBackground
@@ -33,11 +33,11 @@ fun AppButton(
     Button(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled,      // ✅ ahora se aplica al botón interno
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = bgColor,
             contentColor = textColor,
-            disabledContainerColor = bgColor.copy(alpha = 0.4f), // opcional
+            disabledContainerColor = bgColor.copy(alpha = 0.4f),
             disabledContentColor = textColor.copy(alpha = 0.6f)
         ),
         shape = RoundedCornerShape(10.dp)
