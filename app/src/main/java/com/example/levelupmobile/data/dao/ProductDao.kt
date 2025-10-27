@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProductDao {
 
-    // 🔹 Observa todos los productos (Flow para UI reactiva)
+    //Observa todos los productos (Flow para UI reactiva)
     @Query("SELECT * FROM products")
     fun observeAll(): Flow<List<ProductEntity>>
 
-    // 🔹 Observa un producto por ID
+    //Observa un producto por ID
     @Query("SELECT * FROM products WHERE id = :id LIMIT 1")
     fun observeById(id: String): Flow<ProductEntity?>
 
-    // 🔹 Inserta o actualiza uno o varios productos
+    //Inserta o actualiza uno o varios productos
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(products: List<ProductEntity>)
 

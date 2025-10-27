@@ -1,6 +1,7 @@
 package com.example.levelupmobile.nav
 
-import androidx.compose.foundation.layout.padding // ⬅️ IMPORTA LA EXTENSIÓN
+
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,11 +14,10 @@ import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
 import com.example.levelupmobile.vm.models.toCLP
 
-// Imports para el Text temporal (puedes quitarlos cuando ya no lo uses)
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.*
+import com.example.levelupmobile.vm.CheckoutEvent
+import com.example.levelupmobile.vm.CheckoutViewModel
+import com.example.levelupmobile.vm.factory.CheckoutVMFactory
 
 @Composable
 fun AppNavHost(
@@ -46,7 +46,7 @@ fun AppNavHost(
 
             HomeScreen(
                 items = uiItems,
-                cartCount = cartCount, // 👈 nuevo
+                cartCount = cartCount,
                 onOpenProduct = { pid -> navController.navigate(Routes.ProductDetail.create(pid)) },
                 onAddToCart = { pid -> onAddToCartFn(pid) },
                 onGoCart = { navController.navigate(Routes.Cart.route) },
@@ -77,9 +77,9 @@ fun AppNavHost(
 
         // CART
         composable(Routes.Cart.route) {
-            // ViewModel del carrito usando el MISMO repo compartido
+            // ViewModel del carrito
             val vm: com.example.levelupmobile.vm.CartViewModel =
-                androidx.lifecycle.viewmodel.compose.viewModel(
+                viewModel(
                     factory = com.example.levelupmobile.vm.factory.CartVMFactory(repo)
                 )
 
@@ -97,13 +97,37 @@ fun AppNavHost(
 
         // CHECKOUT
         composable(Routes.Checkout.route) {
+            val vm: CheckoutViewModel = viewModel(factory = CheckoutVMFactory(repo))
+            val ui by vm.ui.collectAsState()
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            LaunchedEffect(Unit) {
+                vm.events.collect { ev ->
+                    when (ev) {
+                        is CheckoutEvent.Success -> {
+                            snackbarHostState.showSnackbar("✅ Compra completada con éxito")
+                            navController.popBackStack(Routes.Home.route, false)
+                        }
+                        is CheckoutEvent.Error -> {
+                            snackbarHostState.showSnackbar("⚠️ ${ev.message}")
+                        }
+                    }
+                }
+            }
+
             CheckoutScreen(
-                onFinish = {
-                    // después de finalizar, volvemos al Home
-                    navController.popBackStack(Routes.Home.route, inclusive = false)
-                },
-                onBack = { navController.popBackStack() }
+                ui = ui,
+                onName = vm::onName,
+                onPhone = vm::onPhone,
+                onAddress = vm::onAddress,
+                onDelivery = vm::onDelivery,
+                onPayment = vm::onPayment,
+                onSubmit = vm::submit,
+                onBack = { navController.popBackStack() },
+                snackbarHostState = snackbarHostState,
+                onSetLocation = vm::setLocation
             )
         }
+
     }
 }

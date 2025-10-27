@@ -109,7 +109,7 @@ fun ProductDetailScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Imagen desde drawable por nombre (ui.imageUrl), o placeholder si null
+                //Imagen desde drawable por nombre (ui.imageUrl), o placeholder si null
                 val imageRes = ui?.imageUrl?.let {
                     val ctx = LocalContext.current
                     ctx.resources.getIdentifier(it, "drawable", ctx.packageName)

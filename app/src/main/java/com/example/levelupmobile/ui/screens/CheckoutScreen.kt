@@ -1,94 +1,275 @@
 package com.example.levelupmobile.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.levelupmobile.ui.components.AppButton
-import com.example.levelupmobile.ui.components.ButtonType
-import com.example.levelupmobile.ui.components.InputField
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.lazy.*
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.ViewCompat
+import com.example.levelupmobile.common.StoreLocations
+import com.example.levelupmobile.ui.components.LocationButton
+import com.example.levelupmobile.ui.components.StoreMapButton
+import com.example.levelupmobile.ui.components.reverseGeocode
 import com.example.levelupmobile.ui.theme.*
-import androidx.compose.material3.TopAppBarDefaults
+import com.example.levelupmobile.vm.CheckoutUi
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckoutScreen(onFinish: () -> Unit, onBack: () -> Unit = {}) {
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-
-    val nameError = name.isBlank()
-    val emailError = !email.contains("@") || !email.contains(".")
-    val addressError = address.length < 5
-    val formValid = !nameError && !emailError && !addressError
-
+fun CheckoutScreen(
+    ui: CheckoutUi,
+    onName: (String) -> Unit,
+    onPhone: (String) -> Unit,
+    onAddress: (String) -> Unit,
+    onDelivery: (String) -> Unit,
+    onPayment: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onBack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    onSetLocation: (Double, Double) -> Unit,
+) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text("💳 Checkout", style = MaterialTheme.typography.titleLarge, color = ElectricBlue)
-                },
+                title = { Text("💳 Checkout", color = ElectricBlue) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = BlackBackground,
         bottomBar = {
             Row(
-                Modifier.fillMaxWidth().padding(12.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedButton(
-                    onClick = onBack,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ElectricBlue),
-                    border = ButtonDefaults.outlinedButtonBorder
-                ) { Text("Volver") }
+                OutlinedButton(onClick = onBack, enabled = !ui.isSubmitting) {
+                    Text("Volver")
+                }
+                Button(
+                    onClick = onSubmit,
+                    enabled = ui.canSubmit && !ui.isSubmitting,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (ui.isSubmitting) {
+                        CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+                    } else {
+                        Text("Finalizar compra")
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
 
-                AppButton(
-                    text = "Finalizar pedido",
-                    onClick = { if (formValid) onFinish() },
-                    modifier = Modifier.weight(1f),
-                    type = ButtonType.Secondary
+        // Padding de lista: respetamos el padding del Scaffold y damos espacio extra para la bottomBar
+        val listPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = innerPadding.calculateTopPadding(),
+            bottom = innerPadding.calculateBottomPadding() + 120.dp
+        )
+
+        val ctx = LocalContext.current
+        val scope = rememberCoroutineScope()
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding()             // evita que el teclado tape los campos
+                .navigationBarsPadding(), // evita superposición con la nav bar
+            contentPadding = listPadding,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            item {
+                OutlinedTextField(
+                    value = ui.name, onValueChange = onName,
+                    label = { Text("Nombre completo") },
+                    isError = "name" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["name"])
+            }
+
+            item {
+                OutlinedTextField(
+                    value = ui.phone, onValueChange = onPhone,
+                    label = { Text("Teléfono (+56)") },
+                    isError = "phone" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["phone"])
+            }
+
+            item {
+                OutlinedTextField(
+                    value = ui.address, onValueChange = onAddress,
+                    label = { Text("Dirección") },
+                    isError = "address" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["address"])
+            }
+
+            item {
+                LocationButton(
+                    onLocationReady = { lat, lng ->
+                        onSetLocation(lat, lng)
+                        scope.launch {
+                            val addr = reverseGeocode(ctx, lat, lng)
+                            if (addr != null) {
+                                onAddress(addr)
+                            } else {
+                                onAddress("$lat, $lng")
+                                snackbarHostState.showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
+                            }
+                        }
+                    }
+                )
+            }
+
+            item {
+                DeliveryDropdown(
+                    selected = ui.delivery,
+                    onSelect = onDelivery
+                )
+            }
+
+            item {
+                if (ui.delivery == "Retiro en tienda") {
+                    StoreMapButton(
+                        store = StoreLocations.MAIN,
+                        label = "Ver tienda y cómo llegar"
+                    )
+                }
+            }
+
+            item {
+                PaymentDropdown(
+                    selected = ui.payment,
+                    onSelect = onPayment
                 )
             }
         }
-    ) { padding ->
-        Column(
-            Modifier
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            InputField(
-                value = name,
-                onValueChange = { name = it },
-                label = "Nombre completo",
-                placeholder = "Ej: Felipe Villalobos",
-                isError = nameError,
-                errorMessage = if (nameError) "Obligatorio" else null
-            )
-            InputField(
-                value = email,
-                onValueChange = { email = it },
-                label = "Correo electrónico",
-                placeholder = "ejemplo@duoc.cl",
-                isError = emailError,
-                errorMessage = if (emailError) "Correo inválido" else null
-            )
-            InputField(
-                value = address,
-                onValueChange = { address = it },
-                label = "Dirección",
-                placeholder = "Calle y número",
-                isError = addressError,
-                errorMessage = if (addressError) "Dirección muy corta" else null
-            )
+    }
+}
 
-            Text(
-                text = if (formValid) "✅ Listo para pagar" else "Completa los campos para continuar",
-                style = MaterialTheme.typography.bodyLarge,
-                color = if (formValid) NeonGreen else LightGrayText
-            )
+@Composable
+private fun Helper(msg: String?) {
+    if (msg != null) {
+        Text(msg, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+// ----------------------
+// 🔽 SELECT: ENTREGA (oscuro personalizado)
+// ----------------------
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
+    val options = listOf("Retiro en tienda", "Entrega a domicilio")
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Método de entrega", color = LightGrayText) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = ElectricBlue,
+                unfocusedBorderColor = LightGrayText,
+                focusedLabelColor = ElectricBlue,
+                unfocusedLabelColor = LightGrayText,
+                cursorColor = NeonGreen,
+                focusedTextColor = NeonGreen,
+                unfocusedTextColor = NeonGreen,
+                focusedContainerColor = BlackCard,
+                unfocusedContainerColor = BlackCard
+            ),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            containerColor = BlackCard
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option, color = NeonGreen) },
+                    onClick = {
+                        onSelect(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+// ----------------------
+// SELECT: PAGO (oscuro personalizado)
+// ----------------------
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
+    val options = listOf("Efectivo", "Débito", "Crédito")
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selected,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Método de pago", color = LightGrayText) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = ElectricBlue,
+                unfocusedBorderColor = LightGrayText,
+                focusedLabelColor = ElectricBlue,
+                unfocusedLabelColor = LightGrayText,
+                cursorColor = NeonGreen,
+                focusedTextColor = NeonGreen,
+                unfocusedTextColor = NeonGreen,
+                focusedContainerColor = BlackCard,
+                unfocusedContainerColor = BlackCard
+            ),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            containerColor = BlackCard
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option, color = NeonGreen) },
+                    onClick = {
+                        onSelect(option)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }

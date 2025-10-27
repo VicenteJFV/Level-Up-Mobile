@@ -16,19 +16,19 @@ class ShopRepositoryImpl(
 
     override suspend fun getById(id: String): Product? =
         productDao.getById(id)?.toDomain()
-
+    //Observa productos por ID
     override fun observeById(id: String): Flow<Product?> =
         productDao.observeById(id).map { it?.toDomain() }
 
-    // 🔹 Observa productos
+    //Observa productos
     override fun observeProducts(): Flow<List<Product>> =
         productDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    // 🔹 Observa carrito
+    //Observa carrito
     override fun observeCart(): Flow<List<CartLine>> =
         cartDao.observeCart().map { list -> list.map { it.toDomain() } }
 
-    // 🔹 Añadir al carrito
+    //Añadir al carrito
     override suspend fun addToCart(productId: String, qty: Int) {
         val existing = cartDao.findByProduct(productId)
         if (existing == null) {
@@ -38,24 +38,24 @@ class ShopRepositoryImpl(
         }
     }
 
-    // 🔹 Modificar cantidad directamente
+    //Modificar cantidad directamente
     override suspend fun setQty(productId: String, qty: Int) {
         val existing = cartDao.findByProduct(productId) ?: return
         if (qty <= 0) cartDao.deleteByProduct(productId)
         else cartDao.update(existing.copy(qty = qty))
     }
 
-    // 🔹 Eliminar producto del carrito
+    //Eliminar producto del carrito
     override suspend fun removeFromCart(productId: String) {
         cartDao.deleteByProduct(productId)
     }
 
-    // 🔹 Vaciar carrito
+    //Vaciar carrito
     override suspend fun clearCart() {
         cartDao.clear()
     }
 
-    // 🔹 Checkout: calcula totales e IVA
+    //Checkout: calcula totales e IVA
     override suspend fun checkout(form: CheckoutForm): OrderSummary {
         val cartLines = cartDao.observeCart().first()
         val products = productDao.observeAll().first()
