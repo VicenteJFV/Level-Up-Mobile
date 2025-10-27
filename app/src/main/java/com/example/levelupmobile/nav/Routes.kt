@@ -7,7 +7,7 @@ sealed class Routes(val route: String) {
 
     object ProductDetail : Routes("product/{pid}") {
         const val ARG = "pid"
-        fun create(pid: String) = "product/${Uri.encode(pid)}" // ← codifica el parámetro
+        fun create(pid: String) = "product/${Uri.encode(pid)}"
     }
 
     object Cart : Routes("cart")

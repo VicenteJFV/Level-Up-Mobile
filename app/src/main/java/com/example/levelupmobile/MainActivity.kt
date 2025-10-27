@@ -37,11 +37,11 @@ class MainActivity : ComponentActivity() {
                     val repo = remember { ShopRepositoryImpl(db.productDao(), db.cartDao()) }
 
 
-                    // VM de carrito sencillo
+                    // VM de carrito
                     val cartVm: CartViewModel = viewModel(factory = CartVMFactory(repo))
 
 
-                    // Inyectamos todo a la navegación
+
                     AppNavHost(
                         navController = nav,
                         repo = repo,

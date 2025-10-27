@@ -150,7 +150,7 @@ private fun CartRow(
         // Fila superior: imagen + (nombre, precio)
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            // 📸 Carga del drawable si existe
+            // Carga del drawable si existe
             val context = LocalContext.current
             val imageRes = item.imageUrl
                 ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }

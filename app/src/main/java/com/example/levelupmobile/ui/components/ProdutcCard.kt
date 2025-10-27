@@ -52,7 +52,7 @@ fun ProductCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 📸 Carga drawable por nombre; fallback a ícono si no existe
+            //Carga drawable por nombre
             val context = LocalContext.current
             val imageRes = imageUrl
                 ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }

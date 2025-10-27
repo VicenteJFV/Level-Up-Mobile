@@ -29,12 +29,12 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Scope para trabajo de siembra
+        // Scope para trabajo de seed
         private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         fun get(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
-                // Usamos un ref local para poder acceder dentro del callback
+                //ref local para poder acceder dentro del callback
                 lateinit var dbRef: AppDatabase
 
                 val builder = Room.databaseBuilder(
@@ -45,7 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
 
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         super.onCreate(db)
-                        // ⚠️ Se ejecuta solo la primera vez que se crea la DB
+                        //Se ejecuta solo la primera vez que se crea la DB
                         applicationScope.launch {
                             seedFromJsonIfEmpty(context, dbRef)
                         }
@@ -59,7 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private suspend fun seedFromJsonIfEmpty(context: Context, db: AppDatabase) {
             val dao = db.productDao()
-            if (dao.count() > 0) return // ya hay datos, no sembrar
+            if (dao.count() > 0) return
 
             val jsonText = withContext(Dispatchers.IO) {
                 context.assets.open("products.json")
