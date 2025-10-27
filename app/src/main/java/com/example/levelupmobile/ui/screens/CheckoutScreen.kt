@@ -1,12 +1,20 @@
 package com.example.levelupmobile.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.foundation.lazy.*
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.ViewCompat
+import com.example.levelupmobile.common.StoreLocations
 import com.example.levelupmobile.ui.components.LocationButton
+import com.example.levelupmobile.ui.components.StoreMapButton
 import com.example.levelupmobile.ui.components.reverseGeocode
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.CheckoutUi
@@ -58,72 +66,97 @@ fun CheckoutScreen(
                 }
             }
         }
-    ) { padding ->
-        Column(
-            Modifier
-                .padding(padding)
-                .padding(16.dp)
-                .fillMaxSize(),
+    ) { innerPadding ->
+
+        // Padding de lista: respetamos el padding del Scaffold y damos espacio extra para la bottomBar
+        val listPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = innerPadding.calculateTopPadding(),
+            bottom = innerPadding.calculateBottomPadding() + 120.dp
+        )
+
+        val ctx = LocalContext.current
+        val scope = rememberCoroutineScope()
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .imePadding()             // evita que el teclado tape los campos
+                .navigationBarsPadding(), // evita superposición con la nav bar
+            contentPadding = listPadding,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Nombre
-            OutlinedTextField(
-                value = ui.name, onValueChange = onName,
-                label = { Text("Nombre completo") },
-                isError = "name" in ui.errors,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Helper(ui.errors["name"])
 
-            // Teléfono
-            OutlinedTextField(
-                value = ui.phone, onValueChange = onPhone,
-                label = { Text("Teléfono (+56)") },
-                isError = "phone" in ui.errors,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Helper(ui.errors["phone"])
+            item {
+                OutlinedTextField(
+                    value = ui.name, onValueChange = onName,
+                    label = { Text("Nombre completo") },
+                    isError = "name" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["name"])
+            }
 
-            // Dirección
-            OutlinedTextField(
-                value = ui.address, onValueChange = onAddress,
-                label = { Text("Dirección") },
-                isError = "address" in ui.errors,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Helper(ui.errors["address"])
+            item {
+                OutlinedTextField(
+                    value = ui.phone, onValueChange = onPhone,
+                    label = { Text("Teléfono (+56)") },
+                    isError = "phone" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["phone"])
+            }
 
-            val ctx = LocalContext.current
-            val scope = rememberCoroutineScope()
+            item {
+                OutlinedTextField(
+                    value = ui.address, onValueChange = onAddress,
+                    label = { Text("Dirección") },
+                    isError = "address" in ui.errors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Helper(ui.errors["address"])
+            }
 
-            LocationButton(
-                onLocationReady = { lat, lng ->
-                    onSetLocation(lat, lng)
-
-                    scope.launch {
-                        val addr = reverseGeocode(ctx, lat, lng)
-                        if (addr != null) {
-                            onAddress(addr)
-                        } else {
-                            // Fallback: deja las coordenadas si no se pudo resolver
-                            onAddress("$lat, $lng")
-                            snackbarHostState.showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
+            item {
+                LocationButton(
+                    onLocationReady = { lat, lng ->
+                        onSetLocation(lat, lng)
+                        scope.launch {
+                            val addr = reverseGeocode(ctx, lat, lng)
+                            if (addr != null) {
+                                onAddress(addr)
+                            } else {
+                                onAddress("$lat, $lng")
+                                snackbarHostState.showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
+                            }
                         }
                     }
+                )
+            }
+
+            item {
+                DeliveryDropdown(
+                    selected = ui.delivery,
+                    onSelect = onDelivery
+                )
+            }
+
+            item {
+                if (ui.delivery == "Retiro en tienda") {
+                    StoreMapButton(
+                        store = StoreLocations.MAIN,
+                        label = "Ver tienda y cómo llegar"
+                    )
                 }
-            )
+            }
 
-            // Método de entrega
-            DeliveryDropdown(
-                selected = ui.delivery,
-                onSelect = onDelivery
-            )
-
-            // Método de pago
-            PaymentDropdown(
-                selected = ui.payment,
-                onSelect = onPayment
-            )
+            item {
+                PaymentDropdown(
+                    selected = ui.payment,
+                    onSelect = onPayment
+                )
+            }
         }
     }
 }
