@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
+import com.example.levelupmobile.vm.models.toCLP
 
 // Imports para el Text temporal (puedes quitarlos cuando ya no lo uses)
 import androidx.compose.material3.Text
@@ -30,17 +31,29 @@ fun AppNavHost(
     ) {
         // HOME
         composable(Routes.Home.route) {
+            val products = repo.observeProducts().collectAsState(initial = emptyList()).value
+            // DEBUG temporal para ver qué trae Room
+            println("PRODUCTS -> " + products.joinToString { "${it.id}:${it.imageUrl}" })
+
+
+            val uiItems = products.map {
+                ProductItem(
+                    id = it.id,
+                    name = it.name,
+                    priceLabel = it.priceNeto.toCLP(), // si prefieres formatear aquí
+                    imageUrl = it.imageUrl             // ← viene de tu JSON en assets
+                )
+            }
+
             HomeScreen(
-                onOpenProduct = { pid ->
-                    navController.navigate(Routes.ProductDetail.create(pid))
-                },
-                onAddToCart = { pid ->
-                    onAddToCartFn(pid)
-                },
+                items = uiItems,
+                onOpenProduct = { pid -> navController.navigate(Routes.ProductDetail.create(pid)) },
+                onAddToCart = { pid -> onAddToCartFn(pid) },
                 onGoCart = { navController.navigate(Routes.Cart.route) },
                 onGoCheckout = { navController.navigate(Routes.Checkout.route) }
             )
         }
+
 
         // PRODUCT DETAIL
         composable(
