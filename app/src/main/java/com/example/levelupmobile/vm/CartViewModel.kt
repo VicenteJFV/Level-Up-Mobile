@@ -3,7 +3,7 @@ package com.example.levelupmobile.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.levelupmobile.domain.repo.ShopRepository
-import com.example.levelupmobile.vm.models.CartItemUi    // ✅ usamos la data class global
+import com.example.levelupmobile.vm.models.CartItemUi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -29,11 +29,11 @@ class CartViewModel(private val repo: ShopRepository) : ViewModel() {
         val items: List<CartItemUi> = lines.mapNotNull { line ->
             val p = catalog[line.productId] ?: return@mapNotNull null
             CartItemUi(
-                productId = p.id,        // 👈 usamos el campo correcto
+                productId = p.id,
                 name = p.name,
                 price = p.priceNeto,
                 qty = line.qty,
-                imageUrl = p.imageUrl    // 👈 ahora también pasa la imagen
+                imageUrl = p.imageUrl
             )
         }
 
