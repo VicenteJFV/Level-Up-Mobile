@@ -28,8 +28,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.ui.draw.scale
 import kotlinx.coroutines.delay
 
-// 👉 Importa tu extensión de precio
 import com.example.levelupmobile.vm.models.toCLP
+
+// Coil
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +50,9 @@ fun ProductDetailScreen(
     )
 
     LaunchedEffect(Unit) { show = true } // dispara animación de entrada
+
+    val ctx = LocalContext.current
+    val imageModifier = Modifier.size(180.dp)
 
     Scaffold(
         topBar = {
@@ -77,7 +83,6 @@ fun ProductDetailScreen(
                     Text("Volver")
                 }
 
-                // Botón “Agregar” con pequeño pop; se habilita solo cuando hay datos
                 AppButton(
                     text = if (ui == null) "Cargando..." else "Agregar al carrito",
                     onClick = {
@@ -109,22 +114,37 @@ fun ProductDetailScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                //Imagen desde drawable por nombre (ui.imageUrl), o placeholder si null
-                val imageRes = ui?.imageUrl?.let {
-                    val ctx = LocalContext.current
-                    ctx.resources.getIdentifier(it, "drawable", ctx.packageName)
-                } ?: android.R.drawable.ic_menu_gallery
+                // Mostrar imagen remota con Coil si la URL comienza con http/https,
+                // si no, intentar cargar drawable por nombre; fallback a placeholder.
+                val imageUrl = ui?.imageUrl
+                if (!imageUrl.isNullOrBlank() && (imageUrl.startsWith("http://") || imageUrl.startsWith("https://"))) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(ctx)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = ui?.name ?: "Imagen del producto",
+                        placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        error = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        contentScale = ContentScale.Crop,
+                        modifier = imageModifier
+                    )
+                } else {
+                    val imageRes = imageUrl?.let {
+                        ctx.resources.getIdentifier(it, "drawable", ctx.packageName)
+                    } ?: 0
+                    val resId = if (imageRes != 0) imageRes else android.R.drawable.ic_menu_gallery
 
-                Image(
-                    painter = painterResource(imageRes),
-                    contentDescription = ui?.name ?: "Imagen del producto",
-                    modifier = Modifier.size(180.dp),
-                    contentScale = ContentScale.Crop
-                )
+                    Image(
+                        painter = painterResource(resId),
+                        contentDescription = ui?.name ?: "Imagen del producto",
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
 
-                // Nombre real o estado de carga
                 Text(
                     text = ui?.name ?: "Cargando...",
                     style = MaterialTheme.typography.titleLarge.copy(
@@ -133,7 +153,6 @@ fun ProductDetailScreen(
                     )
                 )
 
-                // Descripción real o estado de carga
                 Text(
                     text = ui?.description ?: "Cargando descripción...",
                     style = MaterialTheme.typography.bodyLarge.copy(
@@ -143,7 +162,6 @@ fun ProductDetailScreen(
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
 
-                // Precio formateado en CLP usando tu extensión
                 val priceLabel = ui?.price?.toCLP() ?: "..."
                 Text(
                     text = "Precio: $priceLabel",
@@ -157,7 +175,6 @@ fun ProductDetailScreen(
         }
     }
 
-    // Reset del “pop” del botón
     LaunchedEffect(pressed) {
         if (pressed) {
             delay(180)

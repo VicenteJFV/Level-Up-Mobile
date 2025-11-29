@@ -19,6 +19,7 @@
         android:theme="@style/Theme.LevelUpMobile"
         android:usesCleartextTraffic="true">
 
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

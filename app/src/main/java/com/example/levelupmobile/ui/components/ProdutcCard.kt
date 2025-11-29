@@ -1,4 +1,3 @@
-// app/src/main/java/com/example/levelupmobile/ui/components/ProductCard.kt
 package com.example.levelupmobile.ui.components
 
 import androidx.compose.foundation.Image
@@ -21,6 +20,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.ui.draw.scale
 import com.example.levelupmobile.ui.theme.*
 import kotlinx.coroutines.delay
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @Composable
 fun ProductCard(
@@ -52,21 +53,46 @@ fun ProductCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //Carga drawable por nombre
             val context = LocalContext.current
-            val imageRes = imageUrl
-                ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
-                ?.takeIf { it != 0 }
-                ?: android.R.drawable.ic_menu_gallery
+            val imageModifier = Modifier
+                .height(140.dp)
+                .fillMaxWidth()
 
-            Image(
-                painter = painterResource(imageRes),
-                contentDescription = name,
-                modifier = Modifier
-                    .height(140.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
+            // Si imageUrl es una URL (http/https) usamos Coil, si es nombre de drawable usamos resources,
+            // si es null o vacío mostramos un placeholder.
+            if (!imageUrl.isNullOrBlank()) {
+                val lower = imageUrl.lowercase()
+                if (lower.startsWith("http://") || lower.startsWith("https://")) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = name,
+                        placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        error = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        contentScale = ContentScale.Crop,
+                        modifier = imageModifier
+                    )
+                } else {
+                    val imageRes = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                        .takeIf { it != 0 } ?: android.R.drawable.ic_menu_gallery
+
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = name,
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            } else {
+                Image(
+                    painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    contentDescription = "placeholder",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Spacer(Modifier.height(12.dp))
             Text(

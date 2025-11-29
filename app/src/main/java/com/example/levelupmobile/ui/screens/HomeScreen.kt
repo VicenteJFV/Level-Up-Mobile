@@ -1,14 +1,20 @@
+// kotlin
+// File: `app/src/main/java/com/example/levelupmobile/ui/screens/HomeScreen.kt`
 package com.example.levelupmobile.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.material3.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -21,6 +27,54 @@ import com.example.levelupmobile.ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.components.ProductCard
 import com.example.levelupmobile.ui.theme.*
+import com.example.levelupmobile.vm.ProductViewModel
+import com.example.levelupmobile.domain.model.Product
+import java.text.NumberFormat
+import java.util.Locale
+
+// Nueva ruta que conecta ViewModel -> UI
+@Composable
+fun HomeRoute(
+    vm: ProductViewModel,
+    cartCount: Int = 0,
+    onOpenProduct: (String) -> Unit = {},
+    onAddToCart: (String) -> Unit = {},
+    onGoCart: () -> Unit = {},
+    onGoCheckout: () -> Unit = {},
+    onSearchOrder: (Long) -> Unit = {}
+) {
+    val products by vm.products.collectAsState()
+    LaunchedEffect(products) {
+        Log.d("HomeRoute", "Productos recibidos: ${products.size}")
+        if (products.isNotEmpty()) Log.d("HomeRoute", "Primer producto: ${products.first()}")
+    }
+
+    val items = products.map { productToItem(it) }
+
+    HomeScreen(
+        items = items,
+        cartCount = cartCount,
+        onOpenProduct = onOpenProduct,
+        onAddToCart = onAddToCart,
+        onGoCart = onGoCart,
+        onGoCheckout = onGoCheckout,
+        onSearchOrder = onSearchOrder
+    )
+}
+
+private fun productToItem(p: Product): ProductItem {
+    // Mostrar precio en CLP (sin decimales). priceNeto se interpreta como pesos chilenos.
+    val nf = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {
+        maximumFractionDigits = 0
+    }
+    val priceLabel = nf.format(p.priceNeto)
+    return ProductItem(
+        id = p.id,
+        name = p.name,
+        priceLabel = priceLabel,
+        imageUrl = p.imageUrl
+    )
+}
 
 data class ProductItem(
     val id: String,
@@ -62,7 +116,6 @@ fun HomeScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Botón de búsqueda de orden
                 AppButton(
                     text = "🔍 Buscar Mi Orden",
                     onClick = { showSearchDialog = true },
@@ -73,7 +126,6 @@ fun HomeScreen(
                     type = ButtonType.Secondary
                 )
 
-                // Botones originales
                 Row(
                     Modifier
                         .fillMaxWidth()

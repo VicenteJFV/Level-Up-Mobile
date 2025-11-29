@@ -57,6 +57,8 @@ dependencies {
 
     // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
+    implementation(libs.androidx.compose.animation.core)
+    implementation(libs.androidx.compose.animation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -90,4 +92,7 @@ dependencies {
 
     // Ubi
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
