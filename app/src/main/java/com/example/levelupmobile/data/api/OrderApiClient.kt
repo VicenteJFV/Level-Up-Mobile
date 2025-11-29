@@ -17,6 +17,9 @@ interface OrderApi {
     @PUT("/api/orders/{id}")
     suspend fun updateOrder(@Path("id") id: Long, @Body order: OrderRequest): Response<OrderResponse>
 
+    @PATCH("/api/orders/{id}/confirm")
+    suspend fun confirmOrder(@Path("id") id: Long): Response<OrderResponse>
+
     @DELETE("/api/orders/{id}")
     suspend fun deleteOrder(@Path("id") id: Long): Response<Void>
 }

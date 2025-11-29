@@ -1,5 +1,6 @@
 package com.example.levelupmobile.domain.repo
 
+import com.example.levelupmobile.data.dto.OrderResponse
 import com.example.levelupmobile.domain.model.CartLine
 import com.example.levelupmobile.domain.model.CheckoutForm
 import com.example.levelupmobile.domain.model.OrderSummary
@@ -85,5 +86,29 @@ class FakeShopRepository : ShopRepository {
             total = total,
             createdAt = System.currentTimeMillis()
         )
+    }
+
+    // ---------- Gestión de Órdenes (FAKE/DUMMY) ----------
+    // Estos métodos no hacen nada real, solo devuelven null/false
+    // porque FakeShopRepository es solo para testing local sin API
+
+    override suspend fun getOrder(orderId: Long): OrderResponse? {
+        // No implementado en el repositorio fake
+        return null
+    }
+
+    override suspend fun updateOrder(orderId: Long, phone: String, address: String): OrderResponse? {
+        // No implementado en el repositorio fake
+        return null
+    }
+
+    override suspend fun confirmOrder(orderId: Long): OrderResponse? {
+        // No implementado en el repositorio fake
+        return null
+    }
+
+    override suspend fun cancelOrder(orderId: Long): Boolean {
+        // No implementado en el repositorio fake
+        return false
     }
 }

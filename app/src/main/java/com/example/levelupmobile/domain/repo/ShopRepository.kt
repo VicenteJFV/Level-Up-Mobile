@@ -1,5 +1,6 @@
 package com.example.levelupmobile.domain.repo
 
+import com.example.levelupmobile.data.dto.OrderResponse
 import com.example.levelupmobile.domain.model.CartLine
 import com.example.levelupmobile.domain.model.CheckoutForm
 import com.example.levelupmobile.domain.model.OrderSummary
@@ -7,10 +8,10 @@ import com.example.levelupmobile.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ShopRepository {
-    //Catálogo
+    // Catálogo
     fun observeProducts(): Flow<List<Product>>
 
-    //lookup por ID (detalle)
+    // Lookup por ID (detalle)
     suspend fun getById(id: String): Product?
     fun observeById(id: String): Flow<Product?>
 
@@ -23,4 +24,10 @@ interface ShopRepository {
 
     // Compra
     suspend fun checkout(form: CheckoutForm): OrderSummary
+
+    // Gestión de órdenes
+    suspend fun getOrder(orderId: Long): OrderResponse?
+    suspend fun updateOrder(orderId: Long, phone: String, address: String): OrderResponse?
+    suspend fun confirmOrder(orderId: Long): OrderResponse?
+    suspend fun cancelOrder(orderId: Long): Boolean
 }

@@ -12,7 +12,10 @@ import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
 import com.example.levelupmobile.vm.CheckoutEvent
 import com.example.levelupmobile.vm.CheckoutViewModel
+import com.example.levelupmobile.vm.OrderEvent
+import com.example.levelupmobile.vm.OrderViewModel
 import com.example.levelupmobile.vm.factory.CheckoutVMFactory
+import com.example.levelupmobile.vm.factory.OrderVMFactory
 import com.example.levelupmobile.vm.models.toCLP
 import kotlinx.coroutines.launch
 
@@ -47,7 +50,8 @@ fun AppNavHost(
                 onOpenProduct = { pid -> navController.navigate(Routes.ProductDetail.create(pid)) },
                 onAddToCart = { pid -> onAddToCartFn(pid) },
                 onGoCart = { navController.navigate(Routes.Cart.route) },
-                onGoCheckout = { navController.navigate(Routes.Checkout.route) }
+                onGoCheckout = { navController.navigate(Routes.Checkout.route) },
+                onSearchOrder = { orderId -> navController.navigate(Routes.OrderDetail.create(orderId)) }
             )
         }
 
@@ -99,9 +103,7 @@ fun AppNavHost(
                 vm.events.collect { ev ->
                     when (ev) {
                         is CheckoutEvent.Success -> {
-                            // Navega a la pantalla de éxito con el orderId
                             navController.navigate(Routes.OrderSuccess.create(ev.orderId)) {
-                                // Limpia el checkout del back stack
                                 popUpTo(Routes.Checkout.route) { inclusive = true }
                             }
                         }
@@ -126,7 +128,7 @@ fun AppNavHost(
             )
         }
 
-        // ORDER SUCCESS (NUEVA PANTALLA)
+        // ORDER SUCCESS
         composable(
             route = Routes.OrderSuccess.route,
             arguments = listOf(
@@ -139,15 +141,63 @@ fun AppNavHost(
             OrderSuccessScreen(
                 orderId = orderId,
                 onGoHome = {
-                    // Limpia el carrito
                     scope.launch {
                         repo.clearCart()
                     }
-                    // Navega a Home y limpia TODO el back stack
                     navController.navigate(Routes.Home.route) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        // ORDER DETAIL (NUEVA PANTALLA)
+        composable(
+            route = Routes.OrderDetail.route,
+            arguments = listOf(
+                navArgument(Routes.OrderDetail.ARG) { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getLong(Routes.OrderDetail.ARG) ?: 0L
+            val vm: OrderViewModel = viewModel(factory = OrderVMFactory(repo))
+            val ui by vm.ui.collectAsState()
+            val snackbarHostState = remember { SnackbarHostState() }
+
+            LaunchedEffect(orderId) {
+                vm.searchOrder(orderId)
+            }
+
+            LaunchedEffect(Unit) {
+                vm.events.collect { event ->
+                    when (event) {
+                        is OrderEvent.OrderCancelled -> {
+                            snackbarHostState.showSnackbar("✅ Pedido cancelado")
+                            navController.popBackStack()
+                        }
+                        is OrderEvent.OrderConfirmed -> {
+                            snackbarHostState.showSnackbar("✅ Pedido confirmado")
+                        }
+                        is OrderEvent.OrderUpdated -> {
+                            snackbarHostState.showSnackbar("✅ Pedido actualizado")
+                        }
+                        is OrderEvent.Error -> {
+                            snackbarHostState.showSnackbar("⚠️ ${event.message}")
+                        }
+                    }
+                }
+            }
+
+            OrderDetailScreen(
+                ui = ui,
+                snackbarHostState = snackbarHostState,
+                onBack = { navController.popBackStack() },
+                onStartEditing = vm::startEditing,
+                onCancelEditing = vm::cancelEditing,
+                onPhoneChange = vm::onPhoneChange,
+                onAddressChange = vm::onAddressChange,
+                onSaveChanges = vm::saveChanges,
+                onConfirmOrder = vm::confirmOrder,
+                onCancelOrder = vm::cancelOrder
             )
         }
     }

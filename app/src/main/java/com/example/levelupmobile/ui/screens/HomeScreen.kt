@@ -6,12 +6,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,9 +37,11 @@ fun HomeScreen(
     onOpenProduct: (String) -> Unit,
     onAddToCart: (String) -> Unit,
     onGoCart: () -> Unit,
-    onGoCheckout: () -> Unit
+    onGoCheckout: () -> Unit,
+    onSearchOrder: (Long) -> Unit
 ) {
-    // Animación suave del número
+    var showSearchDialog by remember { mutableStateOf(false) }
+
     val animatedCount by animateIntAsState(targetValue = cartCount, label = "cart-count")
     val cartText = if (animatedCount > 0) "Ver Carrito ($animatedCount)" else "Ver Carrito"
 
@@ -56,26 +59,42 @@ fun HomeScreen(
             )
         },
         bottomBar = {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
+                // Botón de búsqueda de orden
                 AppButton(
-                    text = cartText,
-                    onClick = onGoCart,
+                    text = "🔍 Buscar Mi Orden",
+                    onClick = { showSearchDialog = true },
                     modifier = Modifier
-                        .weight(1f)
-                        .animateContentSize(),
-                    type = ButtonType.Primary
-                )
-                AppButton(
-                    text = "Ir a Checkout",
-                    onClick = onGoCheckout,
-                    modifier = Modifier.weight(1f),
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                        .padding(top = 8.dp),
                     type = ButtonType.Secondary
                 )
+
+                // Botones originales
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    AppButton(
+                        text = cartText,
+                        onClick = onGoCart,
+                        modifier = Modifier
+                            .weight(1f)
+                            .animateContentSize(),
+                        type = ButtonType.Primary
+                    )
+                    AppButton(
+                        text = "Ir a Checkout",
+                        onClick = onGoCheckout,
+                        modifier = Modifier.weight(1f),
+                        type = ButtonType.Secondary
+                    )
+                }
             }
         },
         containerColor = BlackBackground
@@ -87,10 +106,8 @@ fun HomeScreen(
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            // Header con logo + slogan
             item { StoreHeader() }
 
-            // Lista de productos
             items(items) { p ->
                 ProductCard(
                     name = p.name,
@@ -102,6 +119,87 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showSearchDialog) {
+        SearchOrderDialog(
+            onDismiss = { showSearchDialog = false },
+            onSearch = { orderId ->
+                showSearchDialog = false
+                onSearchOrder(orderId)
+            }
+        )
+    }
+}
+
+@Composable
+private fun SearchOrderDialog(
+    onDismiss: () -> Unit,
+    onSearch: (Long) -> Unit
+) {
+    var orderIdText by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                "Buscar Mi Orden",
+                color = ElectricBlue
+            )
+        },
+        text = {
+            Column {
+                Text(
+                    "Ingresa el ID de tu pedido:",
+                    color = LightGrayText,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = orderIdText,
+                    onValueChange = {
+                        orderIdText = it
+                        error = false
+                    },
+                    label = { Text("ID del pedido") },
+                    placeholder = { Text("Ejemplo: 1") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = error,
+                    supportingText = if (error) {
+                        { Text("Ingresa un ID válido", color = MaterialTheme.colorScheme.error) }
+                    } else null,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = ElectricBlue,
+                        focusedLabelColor = ElectricBlue,
+                        cursorColor = ElectricBlue,
+                        unfocusedTextColor = LightGrayText,
+                        focusedTextColor = LightGrayText
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val orderId = orderIdText.toLongOrNull()
+                    if (orderId != null && orderId > 0) {
+                        onSearch(orderId)
+                    } else {
+                        error = true
+                    }
+                }
+            ) {
+                Text("Buscar", color = ElectricBlue)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar", color = LightGrayText)
+            }
+        },
+        containerColor = BlackBackground
+    )
 }
 
 @Composable
