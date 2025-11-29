@@ -22,6 +22,8 @@ import com.example.levelupmobile.vm.models.CartItemUi
 import com.example.levelupmobile.vm.models.toCLP
 import androidx.compose.material3.Divider
 import androidx.compose.foundation.layout.PaddingValues
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -142,6 +144,8 @@ private fun CartRow(
     onDec: (String) -> Unit,
     onRemove: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,19 +154,46 @@ private fun CartRow(
         // Fila superior: imagen + (nombre, precio)
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            // Carga del drawable si existe
-            val context = LocalContext.current
-            val imageRes = item.imageUrl
-                ?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
-                ?.takeIf { it != 0 }
-                ?: android.R.drawable.ic_menu_gallery
+            // Usar Coil para imágenes remotas (igual que ProductCard)
+            val imageModifier = Modifier.size(72.dp)
+            val imageUrl = item.imageUrl
 
-            Image(
-                painter = painterResource(imageRes),
-                contentDescription = item.name,
-                modifier = Modifier.size(72.dp),
-                contentScale = ContentScale.Crop
-            )
+            if (!imageUrl.isNullOrBlank()) {
+                val lower = imageUrl.lowercase()
+                if (lower.startsWith("http://") || lower.startsWith("https://")) {
+                    // Imagen remota con Coil
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = item.name,
+                        placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        error = painterResource(id = android.R.drawable.ic_menu_gallery),
+                        contentScale = ContentScale.Crop,
+                        modifier = imageModifier
+                    )
+                } else {
+                    // Imagen local (drawable)
+                    val imageRes = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                        .takeIf { it != 0 } ?: android.R.drawable.ic_menu_gallery
+
+                    Image(
+                        painter = painterResource(id = imageRes),
+                        contentDescription = item.name,
+                        modifier = imageModifier,
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            } else {
+                // Placeholder si no hay imagen
+                Image(
+                    painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    contentDescription = "placeholder",
+                    modifier = imageModifier,
+                    contentScale = ContentScale.Crop
+                )
+            }
 
             Spacer(Modifier.width(12.dp))
 

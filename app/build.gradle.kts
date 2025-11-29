@@ -29,20 +29,22 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -54,13 +56,19 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
-
-    // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
     implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.animation)
 
+    // ✅ TESTS unitarios básicos
     testImplementation(libs.junit)
+
+    // ✅ Librerías extra para tests
+    testImplementation("io.mockk:mockk:1.13.11")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    // Instrumentation / UI tests
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -68,10 +76,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // Navegacion compose
+    // Navegación compose
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
-    // Viewmodel y compose
+    // ViewModel y Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
     // Room
@@ -93,6 +101,6 @@ dependencies {
     // Ubi
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    //Coil
+    // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 }

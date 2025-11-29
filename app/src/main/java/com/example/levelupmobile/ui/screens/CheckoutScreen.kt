@@ -1,5 +1,6 @@
 package com.example.levelupmobile.ui.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -50,16 +51,41 @@ fun CheckoutScreen(
                     .padding(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                OutlinedButton(onClick = onBack, enabled = !ui.isSubmitting) {
+                OutlinedButton(
+                    onClick = onBack,
+                    enabled = !ui.isSubmitting,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = ElectricBlue,
+                        disabledContentColor = LightGrayText.copy(alpha = 0.5f)
+                    ),
+                    border = BorderStroke(1.dp, ElectricBlue.copy(alpha = if (ui.isSubmitting) 0.5f else 1f))
+                ) {
                     Text("Volver")
                 }
+
+                // ✅ FIX 3: Botón con bordes visibles cuando está deshabilitado
                 Button(
                     onClick = onSubmit,
                     enabled = ui.canSubmit && !ui.isSubmitting,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = NeonGreen,
+                        contentColor = BlackBackground,
+                        disabledContainerColor = BlackCard, // ✅ Fondo oscuro cuando está deshabilitado
+                        disabledContentColor = LightGrayText.copy(alpha = 0.6f) // ✅ Texto gris cuando está deshabilitado
+                    ),
+                    border = if (ui.canSubmit && !ui.isSubmitting) {
+                        null // Sin borde cuando está habilitado
+                    } else {
+                        BorderStroke(1.dp, LightGrayText.copy(alpha = 0.5f)) // ✅ Borde visible cuando está deshabilitado
+                    }
                 ) {
                     if (ui.isSubmitting) {
-                        CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(20.dp))
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(20.dp),
+                            color = NeonGreen
+                        )
                     } else {
                         Text("Finalizar compra")
                     }

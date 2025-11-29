@@ -75,6 +75,7 @@ fun ProductCard(
                         modifier = imageModifier
                     )
                 } else {
+
                     val imageRes = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
                         .takeIf { it != 0 } ?: android.R.drawable.ic_menu_gallery
 

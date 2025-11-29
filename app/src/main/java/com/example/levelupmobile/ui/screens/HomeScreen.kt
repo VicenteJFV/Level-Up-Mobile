@@ -97,7 +97,12 @@ fun HomeScreen(
     var showSearchDialog by remember { mutableStateOf(false) }
 
     val animatedCount by animateIntAsState(targetValue = cartCount, label = "cart-count")
+
+    // ✅ FIX 1: Solo mostrar el número si hay items
     val cartText = if (animatedCount > 0) "Ver Carrito ($animatedCount)" else "Ver Carrito"
+
+    // ✅ FIX 2: Deshabilitar "Ir a Checkout" si el carrito está vacío
+    val checkoutEnabled = animatedCount > 0
 
     Scaffold(
         topBar = {
@@ -144,7 +149,8 @@ fun HomeScreen(
                         text = "Ir a Checkout",
                         onClick = onGoCheckout,
                         modifier = Modifier.weight(1f),
-                        type = ButtonType.Secondary
+                        type = ButtonType.Secondary,
+                        enabled = checkoutEnabled  // ✅ Deshabilitar si carrito vacío
                     )
                 }
             }
