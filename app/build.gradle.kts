@@ -54,6 +54,10 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.6.0")
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
+
+    // Material Icons Extended
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,24 +66,28 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    //Navegacion compose
+    // Navegacion compose
     implementation("androidx.navigation:navigation-compose:2.8.3")
 
-    //Viewmodel y compose
+    // Viewmodel y compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
 
-    //Room
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
-    //coroutines
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
-    //json
+    // Json
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    //Ubi
+    // Retrofit (API REST)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Ubi
     implementation("com.google.android.gms:play-services-location:21.3.0")
 }

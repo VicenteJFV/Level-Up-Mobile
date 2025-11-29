@@ -12,4 +12,10 @@ sealed class Routes(val route: String) {
 
     object Cart : Routes("cart")
     object Checkout : Routes("checkout")
+
+    // NUEVA RUTA: Pantalla de confirmación de compra
+    object OrderSuccess : Routes("order_success/{orderId}") {
+        const val ARG = "orderId"
+        fun create(orderId: Long) = "order_success/$orderId"
+    }
 }

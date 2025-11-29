@@ -1,9 +1,7 @@
 package com.example.levelupmobile.nav
 
-
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,12 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
-import com.example.levelupmobile.vm.models.toCLP
-
-import androidx.compose.runtime.*
 import com.example.levelupmobile.vm.CheckoutEvent
 import com.example.levelupmobile.vm.CheckoutViewModel
 import com.example.levelupmobile.vm.factory.CheckoutVMFactory
+import com.example.levelupmobile.vm.models.toCLP
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppNavHost(
@@ -54,8 +51,6 @@ fun AppNavHost(
             )
         }
 
-
-
         // PRODUCT DETAIL
         composable(
             route = Routes.ProductDetail.route,
@@ -77,7 +72,6 @@ fun AppNavHost(
 
         // CART
         composable(Routes.Cart.route) {
-            // ViewModel del carrito
             val vm: com.example.levelupmobile.vm.CartViewModel =
                 viewModel(
                     factory = com.example.levelupmobile.vm.factory.CartVMFactory(repo)
@@ -105,8 +99,11 @@ fun AppNavHost(
                 vm.events.collect { ev ->
                     when (ev) {
                         is CheckoutEvent.Success -> {
-                            snackbarHostState.showSnackbar("✅ Compra completada con éxito")
-                            navController.popBackStack(Routes.Home.route, false)
+                            // Navega a la pantalla de éxito con el orderId
+                            navController.navigate(Routes.OrderSuccess.create(ev.orderId)) {
+                                // Limpia el checkout del back stack
+                                popUpTo(Routes.Checkout.route) { inclusive = true }
+                            }
                         }
                         is CheckoutEvent.Error -> {
                             snackbarHostState.showSnackbar("⚠️ ${ev.message}")
@@ -129,5 +126,29 @@ fun AppNavHost(
             )
         }
 
+        // ORDER SUCCESS (NUEVA PANTALLA)
+        composable(
+            route = Routes.OrderSuccess.route,
+            arguments = listOf(
+                navArgument(Routes.OrderSuccess.ARG) { type = NavType.LongType }
+            )
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getLong(Routes.OrderSuccess.ARG) ?: 0L
+            val scope = rememberCoroutineScope()
+
+            OrderSuccessScreen(
+                orderId = orderId,
+                onGoHome = {
+                    // Limpia el carrito
+                    scope.launch {
+                        repo.clearCart()
+                    }
+                    // Navega a Home y limpia TODO el back stack
+                    navController.navigate(Routes.Home.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }
