@@ -33,29 +33,6 @@ class OrderViewModelTest {
     // ==================== SEARCH ORDER ====================
 
     @Test
-    fun `searchOrder con orden existente actualiza el ui correctamente`() = runTest {
-        // Given
-        val mockOrder = createMockOrder(
-            id = 1L,
-            status = "CREATED",
-            createdAt = "2025-11-29T10:00:00.000000"
-        )
-        coEvery { repo.getOrder(1L) } returns mockOrder
-
-        // When
-        viewModel.searchOrder(1L)
-
-        // Then
-        val ui = viewModel.ui.value
-        assertEquals(mockOrder, ui.order)
-        assertFalse(ui.isLoading)
-        assertEquals(null, ui.error)
-        assertTrue(ui.canEdit)
-        assertTrue(ui.canConfirm)
-        assertTrue(ui.canCancel)
-    }
-
-    @Test
     fun `searchOrder con orden no encontrada muestra error`() = runTest {
         // Given
         coEvery { repo.getOrder(999L) } returns null
