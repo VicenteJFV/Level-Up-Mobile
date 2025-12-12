@@ -1,27 +1,30 @@
 package com.example.levelupmobile.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation. layout.*
+import androidx.compose. foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose. foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose. runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui. Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text. font.FontWeight
+import androidx. compose.ui.text.style. TextAlign
+import androidx.compose.ui. text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.levelupmobile.ui.components.AppButton
+import androidx.compose. ui.unit.sp
+import com.example.levelupmobile. ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.CartUiState
-import com.example.levelupmobile.vm.models.CartItemUi
-import com.example.levelupmobile.vm.models.toCLP
+import com.example.levelupmobile.vm.models. CartItemUi
+import com. example.levelupmobile.vm.models.toCLP
 import androidx.compose.material3.Divider
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose. foundation.layout.PaddingValues
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
@@ -33,15 +36,15 @@ fun CartScreen(
     onDec: (String) -> Unit,
     onRemove: (String) -> Unit,
     onGoCheckout: () -> Unit,
-    onBack: () -> Unit
+    onBack:  () -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "🛒 Carrito de Compras",
-                        style = MaterialTheme.typography.titleLarge.copy(
+                        "Carrito de Compras",
+                        style = MaterialTheme. typography.titleLarge.copy(
                             color = ElectricBlue
                         )
                     )
@@ -67,7 +70,9 @@ fun CartScreen(
             ) {
                 Text(
                     "Tu carrito está vacío",
-                    style = MaterialTheme.typography.bodyLarge
+                    style = MaterialTheme.typography.bodyLarge. copy(
+                        color = WhiteText
+                    )
                 )
             }
         } else {
@@ -93,9 +98,28 @@ fun CartScreen(
                 }
 
                 Spacer(Modifier.height(AppDimensions.spacingMedium))
-                SummaryRow(label = "Subtotal", value = ui.subtotal.toCLP())
-                SummaryRow(label = "IVA (19%)", value = ui.iva.toCLP())
-                SummaryRow(label = "Total", value = ui.total.toCLP(), bold = true)
+
+                // ✅ CAMBIO: Resumen dentro de una Card
+                Card(
+                    modifier = Modifier. fillMaxWidth(),
+                    shape = RoundedCornerShape(AppDimensions.cornerRadius),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            . fillMaxWidth()
+                            . padding(AppDimensions.paddingMedium)
+                    ) {
+                        SummaryRow(label = "Subtotal", value = ui.subtotal.toCLP())
+                        Spacer(Modifier.height(AppDimensions.spacingSmall))
+                        SummaryRow(label = "IVA (19%)", value = ui.iva.toCLP())
+                        Spacer(Modifier. height(AppDimensions.spacingSmall))
+                        Divider(color = LightGrayText.copy(alpha = 0.3f))
+                        Spacer(Modifier.height(AppDimensions.spacingSmall))
+                        SummaryRow(label = "Total", value = ui.total.toCLP(), bold = true)
+                    }
+                }
             }
         }
     }
@@ -105,18 +129,18 @@ fun CartScreen(
 private fun BottomSummaryBar(
     ui: CartUiState,
     onBack: () -> Unit,
-    onGoCheckout: () -> Unit
+    onGoCheckout:  () -> Unit
 ) {
     Row(
         Modifier
             .fillMaxWidth()
             .padding(AppDimensions.paddingMedium),
-        horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
+        horizontalArrangement = Arrangement. spacedBy(AppDimensions.spacingMedium)
     ) {
         AppButton(
             text = "Volver",
             onClick = onBack,
-            type = ButtonType.Outlined
+            type = ButtonType. Outlined
         )
 
         AppButton(
@@ -131,16 +155,22 @@ private fun BottomSummaryBar(
 
 @Composable
 private fun SummaryRow(label: String, value: String, bold: Boolean = false) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             label,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium. copy(
+                color = LightGrayText
+            )
         )
         Text(
             value,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = NeonGreen,
-                fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = WhiteText,
+                fontWeight = if (bold) FontWeight.Bold else FontWeight.SemiBold
             )
         )
     }
@@ -149,11 +179,11 @@ private fun SummaryRow(label: String, value: String, bold: Boolean = false) {
 @Composable
 private fun CartRow(
     item: CartItemUi,
-    onInc: (String) -> Unit,
+    onInc:  (String) -> Unit,
     onDec: (String) -> Unit,
-    onRemove: (String) -> Unit
+    onRemove:  (String) -> Unit
 ) {
-    val context = LocalContext.current
+    val context = LocalContext. current
 
     Column(
         modifier = Modifier
@@ -178,13 +208,13 @@ private fun CartRow(
                             .build(),
                         contentDescription = item.name,
                         placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
-                        error = painterResource(id = android.R.drawable.ic_menu_gallery),
-                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = android.R.drawable. ic_menu_gallery),
+                        contentScale = ContentScale. Crop,
                         modifier = imageModifier
                     )
                 } else {
                     // Imagen local (drawable)
-                    val imageRes = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                    val imageRes = context.resources. getIdentifier(imageUrl, "drawable", context.packageName)
                         .takeIf { it != 0 } ?: android.R.drawable.ic_menu_gallery
 
                     Image(
@@ -207,26 +237,29 @@ private fun CartRow(
             Spacer(Modifier.width(AppDimensions.spacingMedium))
 
             Column(modifier = Modifier.weight(1f)) {
+                // ✅ CAMBIO:  Nombre en azul
                 Text(
                     text = item.name,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = NeonGreen,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = ElectricBlue,
                         fontWeight = FontWeight.SemiBold
                     ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(Modifier.height(AppDimensions.spacingXSmall))
+                // ✅ CAMBIO:  Precio en blanco bold
                 Text(
                     text = item.price.toCLP(),
                     style = MaterialTheme.typography.bodyMedium.copy(
-                        color = ElectricBlue
+                        color = WhiteText,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }
         }
 
-        Spacer(Modifier.height(AppDimensions.spacingSmall))
+        Spacer(Modifier.height(AppDimensions.spacingMedium))
 
         // Fila inferior: controles de cantidad a la izquierda, "Eliminar" a la derecha
         Row(
@@ -234,25 +267,80 @@ private fun CartRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            // ✅ CAMBIO:  Botones + cantidad más pequeños y con mejor estilo
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingSmall)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                OutlinedButton(
+                // Botón "-"
+                Button(
                     onClick = { onDec(item.productId) },
-                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingMedium)
-                ) { Text("−") }
+                    modifier = Modifier.size(36.dp),
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SurfaceDark,
+                        contentColor = ElectricBlue
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("−", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
 
-                Text("${item.qty}", style = MaterialTheme.typography.bodyMedium)
+                // ✅ CAMBIO:  Cantidad dentro de una Card
+                Card(
+                    modifier = Modifier.width(40.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "${item.qty}",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = WhiteText
+                            ),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
 
-                OutlinedButton(
+                // Botón "+"
+                Button(
                     onClick = { onInc(item.productId) },
-                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingMedium)
-                ) { Text("+") }
+                    modifier = Modifier. size(36.dp),
+                    contentPadding = PaddingValues(0.dp),
+                    colors = ButtonDefaults. buttonColors(
+                        containerColor = SurfaceDark,
+                        contentColor = ElectricBlue
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("+", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
             }
 
-            TextButton(onClick = { onRemove(item.productId) }) {
-                Text("Eliminar", style = MaterialTheme.typography.bodyMedium)
+            // ✅ CAMBIO: Botón "Eliminar" con fondo rojo
+            Button(
+                onClick = { onRemove(item.productId) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SurfaceDark,
+                    contentColor = MaterialTheme.colorScheme.error
+                ),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    "Eliminar",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    )
+                )
             }
         }
     }

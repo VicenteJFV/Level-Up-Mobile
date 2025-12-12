@@ -1,15 +1,15 @@
 package com.example.levelupmobile.ui.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose. foundation.layout.PaddingValues
+import androidx.compose.foundation. layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation. shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx. compose.ui.Modifier
+import androidx.compose.ui.text. font.FontWeight
+import androidx. compose.ui.unit.dp
 import com.example.levelupmobile.ui.theme.*
 
 /**
@@ -32,19 +32,19 @@ fun AppButton(
     enabled: Boolean = true
 ) {
     val (bgColor, textColor) = when (type) {
-        ButtonType.Primary -> ElectricBlue to BlackBackground
-        ButtonType.Secondary -> NeonGreen to BlackBackground
+        ButtonType.Primary -> ElectricBlue to WhiteText
+        ButtonType.Secondary -> ElectricBlue to WhiteText
         ButtonType.Outlined -> BlackBackground to ElectricBlue
     }
 
     val height = when (size) {
         ButtonSize.Small -> AppDimensions.buttonHeightSmall
         ButtonSize.Medium -> AppDimensions.buttonHeightMedium
-        ButtonSize.Large -> AppDimensions.buttonHeightLarge
+        ButtonSize.Large -> AppDimensions. buttonHeightLarge
     }
 
     val contentPadding = when (size) {
-        ButtonSize.Small -> PaddingValues(horizontal = AppDimensions.paddingSmall, vertical = AppDimensions.paddingXSmall)
+        ButtonSize.Small -> PaddingValues(horizontal = AppDimensions. paddingSmall, vertical = AppDimensions.paddingXSmall)
         ButtonSize.Medium -> PaddingValues(horizontal = AppDimensions.paddingMedium, vertical = AppDimensions.paddingSmall)
         ButtonSize.Large -> PaddingValues(horizontal = AppDimensions.paddingLarge, vertical = AppDimensions.paddingMedium)
     }
@@ -79,7 +79,7 @@ fun AppButton(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = bgColor,
                     contentColor = textColor,
-                    disabledContainerColor = bgColor.copy(alpha = 0.4f),
+                    disabledContainerColor = bgColor. copy(alpha = 0.4f),
                     disabledContentColor = textColor.copy(alpha = 0.6f)
                 ),
                 shape = RoundedCornerShape(AppDimensions.cornerRadius),

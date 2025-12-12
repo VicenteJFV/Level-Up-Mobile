@@ -2,25 +2,25 @@ package com.example.levelupmobile.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.foundation. clickable
+import androidx.compose. foundation.layout.*
+import androidx. compose.foundation.shape.RoundedCornerShape
+import androidx. compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui. Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text. font.FontWeight
+import androidx. compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose. animation.core.animateFloatAsState
+import androidx.compose. animation.core.spring
 import androidx.compose.ui.draw.scale
 import com.example.levelupmobile.ui.theme.*
-import kotlinx.coroutines.delay
-import coil.compose.AsyncImage
+import kotlinx.coroutines. delay
+import coil.compose. AsyncImage
 import coil.request.ImageRequest
 
 @Composable
@@ -53,7 +53,7 @@ fun ProductCard(
                 .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val context = LocalContext.current
+            val context = LocalContext. current
             val imageModifier = Modifier
                 .height(140.dp)
                 .fillMaxWidth()
@@ -70,8 +70,8 @@ fun ProductCard(
                             .build(),
                         contentDescription = name,
                         placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
-                        error = painterResource(id = android.R.drawable.ic_menu_gallery),
-                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = android.R.drawable. ic_menu_gallery),
+                        contentScale = ContentScale. Crop,
                         modifier = imageModifier
                     )
                 } else {
@@ -88,7 +88,7 @@ fun ProductCard(
                 }
             } else {
                 Image(
-                    painter = painterResource(id = android.R.drawable.ic_menu_gallery),
+                    painter = painterResource(id = android.R.drawable. ic_menu_gallery),
                     contentDescription = "placeholder",
                     modifier = imageModifier,
                     contentScale = ContentScale.Crop
@@ -98,15 +98,15 @@ fun ProductCard(
             Spacer(Modifier.height(12.dp))
             Text(
                 text = name,
-                style = MaterialTheme.typography.titleLarge.copy(
+                style = MaterialTheme.typography.titleLarge. copy(
                     color = ElectricBlue,
                     fontSize = 18.sp
                 )
             )
             Text(
                 text = price,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = NeonGreen,
+                style = MaterialTheme.typography. bodyLarge.copy(
+                    color = WhiteText,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -120,7 +120,7 @@ fun ProductCard(
                 modifier = Modifier.scale(scale),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ElectricBlue,
-                    contentColor = BlackBackground
+                    contentColor = WhiteText
                 ),
                 shape = RoundedCornerShape(8.dp)
             ) {

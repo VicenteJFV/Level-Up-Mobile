@@ -1,29 +1,29 @@
 package com.example.levelupmobile.ui.screens
 
-import androidx.compose.foundation.BorderStroke
+import androidx. compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy. items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.foundation.lazy.*
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
-import com.example.levelupmobile.common.StoreLocations
+import androidx.compose. runtime.*
+import androidx.compose. ui.Modifier
+import androidx. compose.ui.platform.LocalContext
+import androidx.compose.ui. unit.dp
+import androidx.compose.ui.platform. LocalDensity
+import androidx. compose.foundation.lazy.*
+import androidx.compose.ui.platform. LocalView
+import androidx.core. view.ViewCompat
+import com.example.levelupmobile. common.StoreLocations
 import com.example.levelupmobile.ui.components.AppButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.components.LocationButton
-import com.example.levelupmobile.ui.components.StoreMapButton
-import com.example.levelupmobile.ui.components.reverseGeocode
+import com.example.levelupmobile.ui.components. StoreMapButton
+import com. example.levelupmobile.ui.components.reverseGeocode
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.CheckoutUi
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api:: class)
 @Composable
 fun CheckoutScreen(
     ui: CheckoutUi,
@@ -35,15 +35,15 @@ fun CheckoutScreen(
     onSubmit: () -> Unit,
     onBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    onSetLocation: (Double, Double) -> Unit,
+    onSetLocation:  (Double, Double) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         "💳 Checkout",
-                        style = MaterialTheme.typography.titleLarge.copy(
+                        style = MaterialTheme.typography. titleLarge.copy(
                             color = ElectricBlue
                         )
                     )
@@ -52,39 +52,15 @@ fun CheckoutScreen(
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = BlackBackground,
-        bottomBar = {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(AppDimensions.paddingMedium),
-                horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
-            ) {
-                AppButton(
-                    text = "Volver",
-                    onClick = onBack,
-                    enabled = !ui.isSubmitting,
-                    type = ButtonType.Outlined
-                )
-
-                // ✅ FIX 3: Botón con bordes visibles cuando está deshabilitado
-                AppButton(
-                    text = if (ui.isSubmitting) "..." else "Finalizar compra",
-                    onClick = onSubmit,
-                    enabled = ui.canSubmit && !ui.isSubmitting,
-                    modifier = Modifier.weight(1f),
-                    type = ButtonType.Secondary
-                )
-            }
-        }
+        containerColor = BlackBackground
+        // ✅ CAMBIO 1: Eliminamos el bottomBar
     ) { innerPadding ->
 
-        // Padding de lista: respetamos el padding del Scaffold y damos espacio extra para la bottomBar
         val listPadding = PaddingValues(
             start = AppDimensions.paddingLarge,
             end = AppDimensions.paddingLarge,
             top = innerPadding.calculateTopPadding(),
-            bottom = innerPadding.calculateBottomPadding() + 120.dp
+            bottom = AppDimensions.paddingMedium  // ✅ CAMBIO 2: Padding normal
         )
 
         val ctx = LocalContext.current
@@ -93,8 +69,8 @@ fun CheckoutScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .imePadding()             // evita que el teclado tape los campos
-                .navigationBarsPadding(), // evita superposición con la nav bar
+                .imePadding()
+                .navigationBarsPadding(),
             contentPadding = listPadding,
             verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
         ) {
@@ -116,7 +92,7 @@ fun CheckoutScreen(
                     isError = "phone" in ui.errors,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Helper(ui.errors["phone"])
+                Helper(ui. errors["phone"])
             }
 
             item {
@@ -139,7 +115,7 @@ fun CheckoutScreen(
                                 onAddress(addr)
                             } else {
                                 onAddress("$lat, $lng")
-                                snackbarHostState.showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
+                                snackbarHostState. showSnackbar("No se pudo resolver la dirección; usando coordenadas.")
                             }
                         }
                     }
@@ -148,7 +124,7 @@ fun CheckoutScreen(
 
             item {
                 DeliveryDropdown(
-                    selected = ui.delivery,
+                    selected = ui. delivery,
                     onSelect = onDelivery
                 )
             }
@@ -164,9 +140,36 @@ fun CheckoutScreen(
 
             item {
                 PaymentDropdown(
-                    selected = ui.payment,
+                    selected = ui. payment,
                     onSelect = onPayment
                 )
+            }
+
+            // ✅ CAMBIO 3: Botones DENTRO del LazyColumn al final
+            item {
+                Spacer(modifier = Modifier. height(AppDimensions.spacingLarge))
+
+                Row(
+                    Modifier. fillMaxWidth(),
+                    horizontalArrangement = Arrangement. spacedBy(AppDimensions. spacingMedium)
+                ) {
+                    AppButton(
+                        text = "Volver",
+                        onClick = onBack,
+                        enabled = ! ui.isSubmitting,
+                        type = ButtonType.Outlined
+                    )
+
+                    AppButton(
+                        text = if (ui.isSubmitting) "..." else "Finalizar compra",
+                        onClick = onSubmit,
+                        enabled = ui.canSubmit && !ui. isSubmitting,
+                        modifier = Modifier.weight(1f),
+                        type = ButtonType.Secondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(AppDimensions.paddingMedium))
             }
         }
     }
@@ -175,29 +178,26 @@ fun CheckoutScreen(
 @Composable
 private fun Helper(msg: String?) {
     if (msg != null) {
-        Text(msg, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        Text(msg, color = MaterialTheme.colorScheme. error, style = MaterialTheme. typography.bodySmall)
     }
 }
 
-// ----------------------
-// 🔽 SELECT: ENTREGA (oscuro personalizado)
-// ----------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
+fun DeliveryDropdown(selected: String, onSelect:  (String) -> Unit) {
     val options = listOf("Retiro en tienda", "Entrega a domicilio")
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { expanded = ! expanded }
     ) {
         OutlinedTextField(
             value = selected,
             onValueChange = {},
             readOnly = true,
             label = { Text("Método de entrega", color = LightGrayText) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            trailingIcon = { ExposedDropdownMenuDefaults. TrailingIcon(expanded) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = ElectricBlue,
                 unfocusedBorderColor = LightGrayText,
@@ -221,7 +221,7 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option, color = NeonGreen) },
+                    text = { Text(option, color = WhiteText) },
                     onClick = {
                         onSelect(option)
                         expanded = false
@@ -232,9 +232,6 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
     }
 }
 
-// ----------------------
-// SELECT: PAGO (oscuro personalizado)
-// ----------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
@@ -250,7 +247,7 @@ fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
             onValueChange = {},
             readOnly = true,
             label = { Text("Método de pago", color = LightGrayText) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            trailingIcon = { ExposedDropdownMenuDefaults. TrailingIcon(expanded) },
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = ElectricBlue,
                 unfocusedBorderColor = LightGrayText,
@@ -274,7 +271,7 @@ fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option, color = NeonGreen) },
+                    text = { Text(option, color = WhiteText) },
                     onClick = {
                         onSelect(option)
                         expanded = false
