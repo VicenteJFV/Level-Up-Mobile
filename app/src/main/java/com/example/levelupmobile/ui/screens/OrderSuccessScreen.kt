@@ -1,23 +1,21 @@
 package com.example.levelupmobile.ui.screens
 
-import androidx.compose.foundation.background
+import androidx. compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material. icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.*
+import androidx.compose. material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.levelupmobile.ui.theme.BlackBackground
-import com.example.levelupmobile.ui.theme.BlackCard
-import com.example.levelupmobile.ui.theme.ElectricBlue
-import com.example.levelupmobile.ui.theme.LightGrayText
-import com.example.levelupmobile.ui.theme.NeonGreen
+import androidx. compose.ui.unit.sp
+import com.example.levelupmobile.ui.components.AppButton
+import com.example.levelupmobile.ui.components.ButtonType
+import com.example.levelupmobile.ui.theme.*
 
 @Composable
 fun OrderSuccessScreen(
@@ -28,94 +26,125 @@ fun OrderSuccessScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BlackBackground)
-            .padding(24.dp),
+            .padding(AppDimensions.paddingXLarge),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment. CenterHorizontally
     ) {
-        // Ícono de éxito
+        // Título principal
+        Text(
+            "Compra Exitosa",
+            style = MaterialTheme.typography.headlineLarge.copy(
+                color = ElectricBlue,
+                fontWeight = FontWeight.Bold
+            ),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier.height(AppDimensions.spacingLarge))
+
+        // Ícono de éxito (verde neón)
         Icon(
             Icons.Default.CheckCircle,
             contentDescription = null,
             tint = NeonGreen,
-            modifier = Modifier.size(80.dp)
+            modifier = Modifier. size(120.dp)
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(AppDimensions.spacingLarge))
 
-        // Título
+        // Subtítulo
         Text(
             "¡Compra Exitosa!",
-            color = ElectricBlue,
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Text(
-            "Tu pedido ha sido registrado.",
-            color = LightGrayText,
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = ElectricBlue,
+                fontWeight = FontWeight.Bold
+            ),
             textAlign = TextAlign.Center
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(AppDimensions.spacingSmall))
 
-        // Tarjeta con ID centrado
+        Text(
+            "Tu pedido ha sido registrado.",
+            style = MaterialTheme.typography.bodyLarge.copy(
+                color = WhiteText,
+                fontWeight = FontWeight.Bold
+            ),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier. height(AppDimensions.spacingXLarge))
+
+        // Tarjeta con ID del pedido
         Card(
-            colors = CardDefaults.cardColors(containerColor = BlackCard),
+            colors = CardDefaults.cardColors(containerColor = SurfaceDark),
             modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(4.dp)
+            shape = RoundedCornerShape(AppDimensions. cornerRadius)
         ) {
             Column(
-                modifier = Modifier.padding(24.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(AppDimensions.paddingLarge)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     "ID DE PEDIDO",
-                    color = LightGrayText,
-                    fontSize = 12.sp,
-                    letterSpacing = 1.sp
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = WhiteText,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
+                    )
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(AppDimensions.spacingSmall))
                 Text(
                     "#$orderId",
-                    color = NeonGreen,
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    style = MaterialTheme. typography.displayLarge.copy(
+                        color = NeonGreen,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 48.sp
+                    )
                 )
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier. height(AppDimensions.spacingLarge))
 
         // Mensaje de advertencia
         Card(
-            colors = CardDefaults.cardColors(containerColor = BlackCard),
+            colors = CardDefaults.cardColors(containerColor = SurfaceDark),
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(AppDimensions.cornerRadius)
         ) {
-            Text(
-                "⚠️ Recuerda guardar el ID de tu pedido para modificaciones o cancelaciones durante las próximas 24 hrs.",
-                color = LightGrayText,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            Row(
+                modifier = Modifier
+                    .padding(AppDimensions.paddingMedium)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "⚠️",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(end = AppDimensions.paddingSmall)
+                )
+                Text(
+                    "Recuerda guardar el ID de tu pedido para modificaciones o cancelaciones durante las próximas 24 hrs.",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = WhiteText,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Start
+                )
+            }
         }
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(AppDimensions.spacingXLarge))
 
-        // UN SOLO BOTÓN: Volver al Inicio
-        Button(
+        // Botón "Volver al Inicio"
+        AppButton(
+            text = "Volver al Inicio",
             onClick = onGoHome,
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = NeonGreen,
-                contentColor = BlackBackground
-            )
-        ) {
-            Icon(Icons.Default.Home, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text("Volver al Inicio", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-        }
+            modifier = Modifier.fillMaxWidth(),
+            type = ButtonType.Primary
+        )
     }
 }

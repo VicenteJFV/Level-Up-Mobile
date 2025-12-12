@@ -3,25 +3,25 @@ package com.example.levelupmobile.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy. items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
+import androidx.compose.material. icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose. material.icons.filled.Edit
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime. Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui. text.font.FontWeight
+import androidx.compose.ui.text. input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.levelupmobile.ui.components.AppButton
+import androidx.compose. ui.unit.sp
+import com.example.levelupmobile. ui.components.AppButton
 import com.example.levelupmobile.ui.components.AppIconButton
-import com.example.levelupmobile.ui.components.ButtonType
+import com.example. levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.theme.*
 import com.example.levelupmobile.vm.OrderDetailUi
 import java.text.NumberFormat
@@ -36,7 +36,7 @@ fun OrderDetailScreen(
     onStartEditing: () -> Unit,
     onCancelEditing: () -> Unit,
     onPhoneChange: (String) -> Unit,
-    onAddressChange: (String) -> Unit,
+    onAddressChange:  (String) -> Unit,
     onSaveChanges: () -> Unit,
     onConfirmOrder: () -> Unit,
     onCancelOrder: () -> Unit
@@ -44,17 +44,18 @@ fun OrderDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { 
+                title = {
                     Text(
                         "Detalle del Pedido",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            color = ElectricBlue
+                        style = MaterialTheme.typography.titleLarge. copy(
+                            color = ElectricBlue,
+                            fontWeight = FontWeight.Bold
                         )
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = LightGrayText)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = WhiteText)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
@@ -71,7 +72,7 @@ fun OrderDetailScreen(
             when {
                 ui.isLoading -> {
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier. align(Alignment.Center),
                         color = ElectricBlue
                     )
                 }
@@ -81,7 +82,7 @@ fun OrderDetailScreen(
                             .fillMaxSize()
                             .padding(AppDimensions.paddingXLarge),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement. Center
                     ) {
                         Text(
                             text = "❌",
@@ -91,14 +92,17 @@ fun OrderDetailScreen(
                         Spacer(Modifier.height(AppDimensions.spacingLarge))
                         Text(
                             text = ui.error,
-                            style = MaterialTheme.typography.bodyLarge,
+                            style = MaterialTheme.typography.bodyLarge. copy(
+                                color = WhiteText,
+                                fontWeight = FontWeight.Bold
+                            ),
                             textAlign = TextAlign.Center
                         )
                         Spacer(Modifier.height(AppDimensions.paddingXLarge))
                         AppButton(
                             text = "Volver",
                             onClick = onBack,
-                            type = ButtonType.Secondary
+                            type = ButtonType.Primary
                         )
                     }
                 }
@@ -126,16 +130,18 @@ private fun OrderContent(
     onCancelEditing: () -> Unit,
     onPhoneChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
-    onSaveChanges: () -> Unit,
+    onSaveChanges:  () -> Unit,
     onConfirmOrder: () -> Unit,
     onCancelOrder: () -> Unit
 ) {
     val order = ui.order ?: return
-    val formatter = NumberFormat.getCurrencyInstance(Locale("es", "CL"))
+    val formatter = NumberFormat.getCurrencyInstance(Locale("es", "CL")).apply {
+        maximumFractionDigits = 0
+    }
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
+            . fillMaxSize()
             .padding(AppDimensions.paddingLarge),
         verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingLarge)
     ) {
@@ -172,14 +178,17 @@ private fun OrderContent(
         item {
             Text(
                 "Productos del Pedido",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium. copy(
+                    color = ElectricBlue,
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
 
         items(order.items) { item ->
             ProductItemCard(
-                name = item.productName,
-                quantity = item.quantity,
+                name = item. productName,
+                quantity = item. quantity,
                 unitPrice = formatter.format(item.unitPrice),
                 total = formatter.format(item.unitPrice * item.quantity)
             )
@@ -208,12 +217,12 @@ private fun StatusCard(
     canEdit: Boolean
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        shape = RoundedCornerShape(12.dp)
+        modifier = Modifier. fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        shape = RoundedCornerShape(AppDimensions.cornerRadius)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier. padding(AppDimensions.paddingMedium)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -222,12 +231,15 @@ private fun StatusCard(
             ) {
                 Text(
                     "Estado",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = WhiteText,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
                 Text(
                     if (status == "CREATED") "📦 Pendiente" else "✅ Confirmado",
                     style = MaterialTheme.typography.titleMedium.copy(
-                        color = if (status == "CREATED") NeonGreen else ElectricBlue,
+                        color = ElectricBlue,
                         fontWeight = FontWeight.Bold
                     )
                 )
@@ -236,9 +248,10 @@ private fun StatusCard(
             if (canEdit && hoursRemaining > 0) {
                 Spacer(Modifier.height(AppDimensions.spacingSmall))
                 Text(
-                    "⏱️ Tiempo restante para editar: $hoursRemaining horas",
+                    "⏱️ Tiempo restante para editar:  $hoursRemaining horas",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = NeonGreen
+                        color = WhiteText,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }
@@ -253,30 +266,33 @@ private fun CustomerDataCard(
     onCancelEditing: () -> Unit,
     onPhoneChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
-    onSaveChanges: () -> Unit
+    onSaveChanges:  () -> Unit
 ) {
     val order = ui.order ?: return
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        shape = RoundedCornerShape(AppDimensions.cornerRadiusMedium)
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        shape = RoundedCornerShape(AppDimensions.cornerRadius)
     ) {
         Column(
-            modifier = Modifier.padding(AppDimensions.paddingLarge)
+            modifier = Modifier.padding(AppDimensions.paddingMedium)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier. fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     "Datos del Cliente",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        color = WhiteText,
+                        fontWeight = FontWeight. Bold
+                    )
                 )
-                if (ui.canEdit && !ui.isEditing) {
+                if (ui.canEdit && ! ui.isEditing) {
                     IconButton(onClick = onStartEditing) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar", tint = ElectricBlue)
+                        Icon(Icons.Default. Edit, contentDescription = "Editar", tint = ElectricBlue)
                     }
                 }
             }
@@ -284,8 +300,11 @@ private fun CustomerDataCard(
             Spacer(Modifier.height(AppDimensions.spacingMedium))
 
             // Nombre (no editable)
-            Text("Nombre:", style = MaterialTheme.typography.bodySmall)
-            Text(order.customerName, style = MaterialTheme.typography.bodyLarge)
+            Text("Nombre:", style = MaterialTheme.typography.bodySmall.copy(color = LightGrayText))
+            Text(order.customerName, style = MaterialTheme.typography.bodyMedium. copy(
+                color = WhiteText,
+                fontWeight = FontWeight.Bold
+            ))
 
             Spacer(Modifier.height(AppDimensions.spacingSmall))
 
@@ -298,16 +317,21 @@ private fun CustomerDataCard(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = ElectricBlue,
+                        unfocusedBorderColor = LightGrayText,
                         focusedLabelColor = ElectricBlue,
+                        unfocusedLabelColor = LightGrayText,
                         cursorColor = ElectricBlue,
-                        unfocusedTextColor = LightGrayText,
-                        focusedTextColor = LightGrayText
+                        focusedTextColor = WhiteText,
+                        unfocusedTextColor = WhiteText
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier. fillMaxWidth()
                 )
             } else {
-                Text("Teléfono:", style = MaterialTheme.typography.bodySmall)
-                Text(order.customerPhone, style = MaterialTheme.typography.bodyLarge)
+                Text("Teléfono:", style = MaterialTheme.typography.bodySmall.copy(color = LightGrayText))
+                Text(order.customerPhone, style = MaterialTheme.typography.bodyMedium.copy(
+                    color = WhiteText,
+                    fontWeight = FontWeight.Bold
+                ))
             }
 
             Spacer(Modifier.height(AppDimensions.spacingSmall))
@@ -320,31 +344,36 @@ private fun CustomerDataCard(
                     label = { Text("Dirección") },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = ElectricBlue,
+                        unfocusedBorderColor = LightGrayText,
                         focusedLabelColor = ElectricBlue,
+                        unfocusedLabelColor = LightGrayText,
                         cursorColor = ElectricBlue,
-                        unfocusedTextColor = LightGrayText,
-                        focusedTextColor = LightGrayText
+                        focusedTextColor = WhiteText,
+                        unfocusedTextColor = WhiteText
                     ),
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 2
                 )
             } else {
-                Text("Dirección:", style = MaterialTheme.typography.bodySmall)
-                Text(order.deliveryAddress, style = MaterialTheme.typography.bodyLarge)
+                Text("Dirección:", style = MaterialTheme.typography.bodySmall.copy(color = LightGrayText))
+                Text(order.deliveryAddress, style = MaterialTheme.typography.bodyMedium.copy(
+                    color = WhiteText,
+                    fontWeight = FontWeight. Bold
+                ))
             }
 
             // Botones de edición
             if (ui.isEditing) {
-                Spacer(Modifier.height(AppDimensions.spacingLarge))
+                Spacer(Modifier.height(AppDimensions.spacingMedium))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingSmall)
+                    horizontalArrangement = Arrangement.spacedBy(AppDimensions. spacingSmall)
                 ) {
                     AppButton(
                         text = "Cancelar",
                         onClick = onCancelEditing,
                         modifier = Modifier.weight(1f),
-                        type = ButtonType.Secondary
+                        type = ButtonType. Outlined
                     )
                     AppButton(
                         text = "Guardar",
@@ -362,13 +391,25 @@ private fun CustomerDataCard(
 private fun InfoCard(title: String, content: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        shape = RoundedCornerShape(AppDimensions.cornerRadiusMedium)
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        shape = RoundedCornerShape(AppDimensions.cornerRadius)
     ) {
-        Column(modifier = Modifier.padding(AppDimensions.paddingLarge)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
+        Column(modifier = Modifier.padding(AppDimensions.paddingMedium)) {
+            Text(
+                title,
+                style = MaterialTheme.typography.titleMedium. copy(
+                    color = ElectricBlue,
+                    fontWeight = FontWeight.Bold
+                )
+            )
             Spacer(Modifier.height(AppDimensions.spacingXSmall))
-            Text(content, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                content,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = WhiteText,
+                    fontWeight = FontWeight.Bold
+                )
+            )
         }
     }
 }
@@ -381,29 +422,37 @@ private fun ProductItemCard(
     total: String
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1A1A1A)),
-        shape = RoundedCornerShape(AppDimensions.cornerRadiusSmall)
+        modifier = Modifier. fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        shape = RoundedCornerShape(AppDimensions. cornerRadius)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppDimensions.paddingMedium),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(AppDimensions. paddingMedium),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment. CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(name, style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    name,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = ElectricBlue,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Spacer(Modifier.height(AppDimensions.spacingXSmall))
                 Text(
                     "Cantidad: $quantity × $unitPrice",
                     style = MaterialTheme.typography.bodySmall.copy(
-                        color = LightGrayText.copy(alpha = 0.7f)
+                        color = WhiteText
                     )
                 )
             }
             Text(
                 total,
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    color = NeonGreen,
+                style = MaterialTheme. typography.bodyLarge.copy(
+                    color = WhiteText,
                     fontWeight = FontWeight.Bold
                 )
             )
@@ -415,21 +464,21 @@ private fun ProductItemCard(
 private fun TotalCard(total: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = ElectricBlue.copy(alpha = 0.15f)),
-        shape = RoundedCornerShape(AppDimensions.cornerRadiusMedium)
+        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        shape = RoundedCornerShape(AppDimensions.cornerRadius)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(AppDimensions.paddingLarge),
+                .padding(AppDimensions. paddingMedium),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment. CenterVertically
         ) {
             Text(
                 "Total",
-                style = MaterialTheme.typography.titleLarge.copy(
+                style = MaterialTheme. typography.titleLarge.copy(
                     color = ElectricBlue,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight. Bold
                 )
             )
             Text(
@@ -450,13 +499,12 @@ private fun ActionButtons(
     onCancelOrder: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
+        modifier = Modifier. fillMaxWidth(),
+        verticalArrangement = Arrangement. spacedBy(AppDimensions.spacingMedium)
     ) {
         if (ui.canConfirm) {
-            AppIconButton(
+            AppButton(
                 text = "Confirmar Pedido",
-                icon = "✅",
                 onClick = onConfirmOrder,
                 modifier = Modifier.fillMaxWidth(),
                 type = ButtonType.Primary
@@ -464,22 +512,24 @@ private fun ActionButtons(
         }
 
         if (ui.canCancel) {
-            AppIconButton(
+            AppButton(
                 text = "Cancelar Pedido",
-                icon = "❌",
                 onClick = onCancelOrder,
                 modifier = Modifier.fillMaxWidth(),
-                type = ButtonType.Secondary
+                type = ButtonType.Outlined
             )
         }
 
-        if (!ui.canEdit) {
+        if (! ui.canEdit) {
             Text(
-                text = if (ui.order?.status == "CONFIRMED")
+                text = if (ui.order?. status == "CONFIRMED")
                     "✅ Este pedido ya está confirmado"
                 else
                     "⏱️ El tiempo para editar este pedido ha expirado",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = WhiteText,
+                    fontWeight = FontWeight.Bold
+                ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )

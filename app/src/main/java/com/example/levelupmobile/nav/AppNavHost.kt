@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.levelupmobile.domain.repo.ShopRepository
 import com.example.levelupmobile.ui.screens.*
+import com. example.levelupmobile.ui.screens.ProductDetailScreen
 import com.example.levelupmobile.vm.CheckoutEvent
 import com.example.levelupmobile.vm.CheckoutViewModel
 import com.example.levelupmobile.vm.OrderEvent
