@@ -32,8 +32,8 @@ fun AppButton(
     enabled: Boolean = true
 ) {
     val (bgColor, textColor) = when (type) {
-        ButtonType.Primary -> ElectricBlue to BlackBackground
-        ButtonType.Secondary -> NeonGreen to BlackBackground
+        ButtonType.Primary -> ElectricBlue to WhiteText
+        ButtonType.Secondary -> ElectricBlue to WhiteText
         ButtonType.Outlined -> BlackBackground to ElectricBlue
     }
 

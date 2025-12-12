@@ -203,9 +203,9 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
                 unfocusedBorderColor = LightGrayText,
                 focusedLabelColor = ElectricBlue,
                 unfocusedLabelColor = LightGrayText,
-                cursorColor = NeonGreen,
-                focusedTextColor = NeonGreen,
-                unfocusedTextColor = NeonGreen,
+                cursorColor = WhiteText,
+                focusedTextColor = WhiteText,
+                unfocusedTextColor = WhiteText,
                 focusedContainerColor = BlackCard,
                 unfocusedContainerColor = BlackCard
             ),
@@ -221,7 +221,7 @@ fun DeliveryDropdown(selected: String, onSelect: (String) -> Unit) {
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option, color = NeonGreen) },
+                    text = { Text(option, color = WhiteText) },
                     onClick = {
                         onSelect(option)
                         expanded = false
@@ -256,9 +256,9 @@ fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
                 unfocusedBorderColor = LightGrayText,
                 focusedLabelColor = ElectricBlue,
                 unfocusedLabelColor = LightGrayText,
-                cursorColor = NeonGreen,
-                focusedTextColor = NeonGreen,
-                unfocusedTextColor = NeonGreen,
+                cursorColor = WhiteText,
+                focusedTextColor = WhiteText,
+                unfocusedTextColor = WhiteText,
                 focusedContainerColor = BlackCard,
                 unfocusedContainerColor = BlackCard
             ),
@@ -274,7 +274,7 @@ fun PaymentDropdown(selected: String, onSelect: (String) -> Unit) {
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option, color = NeonGreen) },
+                    text = { Text(option, color = WhiteText) },
                     onClick = {
                         onSelect(option)
                         expanded = false

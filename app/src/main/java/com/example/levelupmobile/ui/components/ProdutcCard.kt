@@ -106,7 +106,7 @@ fun ProductCard(
             Text(
                 text = price,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    color = NeonGreen,
+                    color = WhiteText,
                     fontWeight = FontWeight.Bold
                 )
             )

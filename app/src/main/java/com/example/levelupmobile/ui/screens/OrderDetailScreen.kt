@@ -435,7 +435,7 @@ private fun TotalCard(total: String) {
             Text(
                 total,
                 style = MaterialTheme.typography.titleLarge.copy(
-                    color = NeonGreen,
+                    color = WhiteText,
                     fontWeight = FontWeight.Bold
                 )
             )
