@@ -164,7 +164,7 @@ private fun CartRow(
         Row(verticalAlignment = Alignment.CenterVertically) {
 
             // Usar Coil para imágenes remotas (igual que ProductCard)
-            val imageModifier = Modifier.size(72.dp)
+            val imageModifier = Modifier.size(AppDimensions.imageMedium)
             val imageUrl = item.imageUrl
 
             if (!imageUrl.isNullOrBlank()) {

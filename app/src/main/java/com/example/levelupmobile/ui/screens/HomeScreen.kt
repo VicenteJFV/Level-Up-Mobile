@@ -275,7 +275,7 @@ private fun StoreHeader() {
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = "Logo Level-Up Gamer",
-            modifier = Modifier.size(110.dp)
+            modifier = Modifier.size(AppDimensions.imageLarge)
         )
         Spacer(Modifier.height(AppDimensions.spacingMedium))
         Text(

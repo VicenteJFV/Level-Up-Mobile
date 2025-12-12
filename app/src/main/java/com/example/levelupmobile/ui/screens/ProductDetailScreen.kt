@@ -52,7 +52,7 @@ fun ProductDetailScreen(
     LaunchedEffect(Unit) { show = true } // dispara animación de entrada
 
     val ctx = LocalContext.current
-    val imageModifier = Modifier.size(180.dp)
+    val imageModifier = Modifier.size(AppDimensions.imageXLarge)
 
     Scaffold(
         topBar = {
