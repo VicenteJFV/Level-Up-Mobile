@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 import com.example.levelupmobile.common.StoreLocations
+import com.example.levelupmobile.ui.components.AppButton
+import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.components.LocationButton
 import com.example.levelupmobile.ui.components.StoreMapButton
 import com.example.levelupmobile.ui.components.reverseGeocode
@@ -38,7 +40,14 @@ fun CheckoutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("💳 Checkout", color = ElectricBlue) },
+                title = { 
+                    Text(
+                        "💳 Checkout",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = ElectricBlue
+                        )
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
             )
         },
@@ -48,56 +57,32 @@ fun CheckoutScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(AppDimensions.paddingMedium),
+                horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
             ) {
-                OutlinedButton(
+                AppButton(
+                    text = "Volver",
                     onClick = onBack,
                     enabled = !ui.isSubmitting,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = ElectricBlue,
-                        disabledContentColor = LightGrayText.copy(alpha = 0.5f)
-                    ),
-                    border = BorderStroke(1.dp, ElectricBlue.copy(alpha = if (ui.isSubmitting) 0.5f else 1f))
-                ) {
-                    Text("Volver")
-                }
+                    type = ButtonType.Outlined
+                )
 
                 // ✅ FIX 3: Botón con bordes visibles cuando está deshabilitado
-                Button(
+                AppButton(
+                    text = if (ui.isSubmitting) "..." else "Finalizar compra",
                     onClick = onSubmit,
                     enabled = ui.canSubmit && !ui.isSubmitting,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = NeonGreen,
-                        contentColor = BlackBackground,
-                        disabledContainerColor = BlackCard, // ✅ Fondo oscuro cuando está deshabilitado
-                        disabledContentColor = LightGrayText.copy(alpha = 0.6f) // ✅ Texto gris cuando está deshabilitado
-                    ),
-                    border = if (ui.canSubmit && !ui.isSubmitting) {
-                        null // Sin borde cuando está habilitado
-                    } else {
-                        BorderStroke(1.dp, LightGrayText.copy(alpha = 0.5f)) // ✅ Borde visible cuando está deshabilitado
-                    }
-                ) {
-                    if (ui.isSubmitting) {
-                        CircularProgressIndicator(
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(20.dp),
-                            color = NeonGreen
-                        )
-                    } else {
-                        Text("Finalizar compra")
-                    }
-                }
+                    type = ButtonType.Secondary
+                )
             }
         }
     ) { innerPadding ->
 
         // Padding de lista: respetamos el padding del Scaffold y damos espacio extra para la bottomBar
         val listPadding = PaddingValues(
-            start = 16.dp,
-            end = 16.dp,
+            start = AppDimensions.paddingLarge,
+            end = AppDimensions.paddingLarge,
             top = innerPadding.calculateTopPadding(),
             bottom = innerPadding.calculateBottomPadding() + 120.dp
         )
@@ -111,7 +96,7 @@ fun CheckoutScreen(
                 .imePadding()             // evita que el teclado tape los campos
                 .navigationBarsPadding(), // evita superposición con la nav bar
             contentPadding = listPadding,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
         ) {
 
             item {

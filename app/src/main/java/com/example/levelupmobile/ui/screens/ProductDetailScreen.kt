@@ -60,8 +60,9 @@ fun ProductDetailScreen(
                 title = {
                     Text(
                         "🎯 Detalle del Producto",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = ElectricBlue
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = ElectricBlue
+                        )
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
@@ -72,16 +73,14 @@ fun ProductDetailScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(AppDimensions.paddingMedium),
+                horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
             ) {
-                OutlinedButton(
+                AppButton(
+                    text = "Volver",
                     onClick = onBack,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = ElectricBlue),
-                    border = ButtonDefaults.outlinedButtonBorder
-                ) {
-                    Text("Volver")
-                }
+                    type = ButtonType.Outlined
+                )
 
                 AppButton(
                     text = if (ui == null) "Cargando..." else "Agregar al carrito",
@@ -111,7 +110,7 @@ fun ProductDetailScreen(
             Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(AppDimensions.paddingLarge),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Mostrar imagen remota con Coil si la URL comienza con http/https,
@@ -143,32 +142,25 @@ fun ProductDetailScreen(
                     )
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(AppDimensions.spacingLarge))
 
                 Text(
                     text = ui?.name ?: "Cargando...",
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        color = NeonGreen,
-                        fontSize = 22.sp
-                    )
+                    style = MaterialTheme.typography.headlineMedium
                 )
 
                 Text(
                     text = ui?.description ?: "Cargando descripción...",
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        color = LightGrayText,
-                        fontSize = 16.sp
-                    ),
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(vertical = AppDimensions.paddingSmall)
                 )
 
                 val priceLabel = ui?.price?.toCLP() ?: "..."
                 Text(
                     text = "Precio: $priceLabel",
-                    style = MaterialTheme.typography.bodyLarge.copy(
+                    style = MaterialTheme.typography.titleMedium.copy(
                         color = ElectricBlue,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }

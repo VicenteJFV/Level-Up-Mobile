@@ -2,20 +2,21 @@ package com.example.levelupmobile.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.example.levelupmobile.ui.theme.*
 
 /**
- * Botón reutilizable con estilo Level-Up Gamer
+ * Botón con ícono reutilizable con estilo Level-Up Gamer
  *
  * @param text Texto del botón
+ * @param icon Emoji o ícono a mostrar
  * @param onClick Acción al presionar
  * @param modifier Permite ajustar el tamaño o padding
  * @param type Define el estilo del botón
@@ -23,8 +24,9 @@ import com.example.levelupmobile.ui.theme.*
  * @param enabled Habilita o deshabilita el botón
  */
 @Composable
-fun AppButton(
+fun AppIconButton(
     text: String,
+    icon: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     type: ButtonType = ButtonType.Primary,
@@ -63,6 +65,8 @@ fun AppButton(
                 shape = RoundedCornerShape(AppDimensions.cornerRadius),
                 contentPadding = contentPadding
             ) {
+                Text(text = icon)
+                Spacer(modifier = Modifier.width(AppDimensions.spacingSmall))
                 Text(
                     text = text,
                     style = MaterialTheme.typography.labelLarge.copy(
@@ -85,6 +89,8 @@ fun AppButton(
                 shape = RoundedCornerShape(AppDimensions.cornerRadius),
                 contentPadding = contentPadding
             ) {
+                Text(text = icon)
+                Spacer(modifier = Modifier.width(AppDimensions.spacingSmall))
                 Text(
                     text = text,
                     style = MaterialTheme.typography.labelLarge.copy(
@@ -95,6 +101,3 @@ fun AppButton(
         }
     }
 }
-
-enum class ButtonType { Primary, Secondary, Outlined }
-enum class ButtonSize { Small, Medium, Large }

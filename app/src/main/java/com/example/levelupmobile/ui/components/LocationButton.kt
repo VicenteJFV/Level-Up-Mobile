@@ -4,9 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
@@ -14,7 +13,8 @@ import com.google.android.gms.location.Priority
 
 @Composable
 fun LocationButton(
-    onLocationReady: (lat: Double, lng: Double) -> Unit
+    onLocationReady: (lat: Double, lng: Double) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val ctx = LocalContext.current
     val fused = remember { LocationServices.getFusedLocationProviderClient(ctx) }
@@ -56,18 +56,22 @@ fun LocationButton(
         }
     }
 
-    Button(onClick = {
-        if (!hasFine && !hasCoarse) {
-            requestPerms.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+    AppIconButton(
+        text = "Usar mi ubicación",
+        icon = "📍",
+        onClick = {
+            if (!hasFine && !hasCoarse) {
+                requestPerms.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
                 )
-            )
-        } else {
-            requestLocation()
-        }
-    }) {
-        Text("Usar mi ubicación")
-    }
+            } else {
+                requestLocation()
+            }
+        },
+        modifier = modifier,
+        type = ButtonType.Outlined
+    )
 }

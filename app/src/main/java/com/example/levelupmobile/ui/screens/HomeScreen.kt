@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.levelupmobile.R
 import com.example.levelupmobile.ui.components.AppButton
+import com.example.levelupmobile.ui.components.AppIconButton
 import com.example.levelupmobile.ui.components.ButtonType
 import com.example.levelupmobile.ui.components.ProductCard
 import com.example.levelupmobile.ui.theme.*
@@ -110,8 +111,9 @@ fun HomeScreen(
                 title = {
                     Text(
                         "Level-Up Gamer",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = ElectricBlue
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = ElectricBlue
+                        )
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
@@ -121,21 +123,22 @@ fun HomeScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                AppButton(
-                    text = "🔍 Buscar Mi Orden",
+                AppIconButton(
+                    text = "Buscar Mi Orden",
+                    icon = "🔍",
                     onClick = { showSearchDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
-                        .padding(top = 8.dp),
+                        .padding(horizontal = AppDimensions.paddingMedium)
+                        .padding(top = AppDimensions.paddingSmall),
                     type = ButtonType.Secondary
                 )
 
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        .padding(AppDimensions.paddingMedium),
+                    horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
                 ) {
                     AppButton(
                         text = cartText,
@@ -161,8 +164,8 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(horizontal = AppDimensions.paddingMedium, vertical = AppDimensions.paddingSmall),
+            verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingSmall)
         ) {
             item { StoreHeader() }
 
@@ -202,17 +205,18 @@ private fun SearchOrderDialog(
         title = {
             Text(
                 "Buscar Mi Orden",
-                color = ElectricBlue
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = ElectricBlue
+                )
             )
         },
         text = {
             Column {
                 Text(
                     "Ingresa el ID de tu pedido:",
-                    color = LightGrayText,
                     style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(AppDimensions.spacingMedium))
                 OutlinedTextField(
                     value = orderIdText,
                     onValueChange = {
@@ -265,7 +269,7 @@ private fun StoreHeader() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 8.dp, bottom = 16.dp),
+            .padding(top = AppDimensions.paddingSmall, bottom = AppDimensions.paddingLarge),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
@@ -273,18 +277,14 @@ private fun StoreHeader() {
             contentDescription = "Logo Level-Up Gamer",
             modifier = Modifier.size(110.dp)
         )
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(AppDimensions.spacingMedium))
         Text(
             text = "Los mejores precios y productos para darle un Level-Up a tu PC Gamer.",
-            color = LightGrayText,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 16.sp,
-                lineHeight = 20.sp
-            ),
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(horizontal = 24.dp)
+            modifier = Modifier.padding(horizontal = AppDimensions.paddingXLarge)
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(AppDimensions.spacingMedium))
         Divider(color = LightGrayText.copy(alpha = 0.12f))
     }
 }

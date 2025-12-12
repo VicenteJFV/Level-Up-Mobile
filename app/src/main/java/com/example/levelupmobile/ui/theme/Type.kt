@@ -19,28 +19,70 @@ val Orbitron = FontFamily(
 )
 
 val Typography = Typography(
+    // Títulos grandes (pantallas principales)
     displayLarge = TextStyle(
         fontFamily = Orbitron,
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = WhiteText
     ),
+    // Títulos principales de pantallas
+    headlineLarge = TextStyle(
+        fontFamily = Orbitron,
+        fontWeight = FontWeight.Bold,
+        fontSize = 28.sp,
+        color = ElectricBlue
+    ),
+    // Subtítulos de secciones
+    headlineMedium = TextStyle(
+        fontFamily = Orbitron,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+        color = NeonGreen
+    ),
+    // Títulos de cards y componentes
     titleLarge = TextStyle(
         fontFamily = Orbitron,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         color = WhiteText
     ),
+    titleMedium = TextStyle(
+        fontFamily = Orbitron,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        color = ElectricBlue
+    ),
+    // Texto normal y secundario
     bodyLarge = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         color = LightGrayText
     ),
+    bodyMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        color = LightGrayText
+    ),
+    bodySmall = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
+        fontSize = 12.sp,
+        color = LightGrayText
+    ),
+    // Textos de botones
     labelLarge = TextStyle(
         fontFamily = Roboto,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
+        color = WhiteText
+    ),
+    labelMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
         color = WhiteText
     )
 )

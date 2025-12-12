@@ -41,8 +41,9 @@ fun CartScreen(
                 title = {
                     Text(
                         "🛒 Carrito de Compras",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = ElectricBlue
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            color = ElectricBlue
+                        )
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = BlackBackground)
@@ -64,18 +65,21 @@ fun CartScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Tu carrito está vacío", color = LightGrayText)
+                Text(
+                    "Tu carrito está vacío",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         } else {
             Column(
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(12.dp)
+                    .padding(AppDimensions.paddingMedium)
             ) {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
                 ) {
                     items(ui.items, key = { it.productId }) { item ->
                         CartRow(
@@ -88,7 +92,7 @@ fun CartScreen(
                     }
                 }
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(AppDimensions.spacingMedium))
                 SummaryRow(label = "Subtotal", value = ui.subtotal.toCLP())
                 SummaryRow(label = "IVA (19%)", value = ui.iva.toCLP())
                 SummaryRow(label = "Total", value = ui.total.toCLP(), bold = true)
@@ -106,14 +110,14 @@ private fun BottomSummaryBar(
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(AppDimensions.paddingMedium),
+        horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingMedium)
     ) {
-        OutlinedButton(
+        AppButton(
+            text = "Volver",
             onClick = onBack,
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = ElectricBlue),
-            border = ButtonDefaults.outlinedButtonBorder
-        ) { Text("Volver") }
+            type = ButtonType.Outlined
+        )
 
         AppButton(
             text = "Proceder a Checkout",
@@ -128,11 +132,16 @@ private fun BottomSummaryBar(
 @Composable
 private fun SummaryRow(label: String, value: String, bold: Boolean = false) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(label, color = LightGrayText)
+        Text(
+            label,
+            style = MaterialTheme.typography.bodyMedium
+        )
         Text(
             value,
-            color = NeonGreen,
-            fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = NeonGreen,
+                fontWeight = if (bold) FontWeight.Bold else FontWeight.Normal
+            )
         )
     }
 }
@@ -149,7 +158,7 @@ private fun CartRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .padding(AppDimensions.spacingMedium)
     ) {
         // Fila superior: imagen + (nombre, precio)
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -195,25 +204,29 @@ private fun CartRow(
                 )
             }
 
-            Spacer(Modifier.width(12.dp))
+            Spacer(Modifier.width(AppDimensions.spacingMedium))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = item.name,
-                    color = NeonGreen,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = NeonGreen,
+                        fontWeight = FontWeight.SemiBold
+                    ),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(AppDimensions.spacingXSmall))
                 Text(
                     text = item.price.toCLP(),
-                    color = ElectricBlue
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = ElectricBlue
+                    )
                 )
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(AppDimensions.spacingSmall))
 
         // Fila inferior: controles de cantidad a la izquierda, "Eliminar" a la derecha
         Row(
@@ -223,23 +236,23 @@ private fun CartRow(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppDimensions.spacingSmall)
             ) {
                 OutlinedButton(
                     onClick = { onDec(item.productId) },
-                    contentPadding = PaddingValues(horizontal = 12.dp)
+                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingMedium)
                 ) { Text("−") }
 
-                Text("${item.qty}", color = LightGrayText)
+                Text("${item.qty}", style = MaterialTheme.typography.bodyMedium)
 
                 OutlinedButton(
                     onClick = { onInc(item.productId) },
-                    contentPadding = PaddingValues(horizontal = 12.dp)
+                    contentPadding = PaddingValues(horizontal = AppDimensions.paddingMedium)
                 ) { Text("+") }
             }
 
             TextButton(onClick = { onRemove(item.productId) }) {
-                Text("Eliminar", color = LightGrayText)
+                Text("Eliminar", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
